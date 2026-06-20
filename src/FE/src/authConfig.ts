@@ -1,11 +1,8 @@
-import { Configuration, LogLevel, PopupRequest } from "@azure/msal-browser";
+import { Configuration, LogLevel, RedirectRequest } from "@azure/msal-browser";
 
-const defaultClientId = "00000000-0000-0000-0000-000000000000";
-const defaultTenantId = "common";
-
-const clientId = process.env.REACT_APP_AZURE_CLIENT_ID?.trim() || defaultClientId;
-const tenantId = process.env.REACT_APP_AZURE_TENANT_ID?.trim() || defaultTenantId;
-const redirectUri = process.env.REACT_APP_AZURE_REDIRECT_URI?.trim() || window.location.origin;
+const clientId = "837e627e-f1a0-471f-af65-70b69f7d073d";
+const tenantId = "7f8ac17c-e18d-4f8e-a8ec-9fb46868bb8f";
+const redirectUri = "http://localhost:3000/";
 
 export const msalConfig: Configuration = {
   auth: {
@@ -31,8 +28,6 @@ export const msalConfig: Configuration = {
   },
 };
 
-export const loginRequest: PopupRequest = {
+export const loginRequest: RedirectRequest = {
   scopes: ["User.Read"],
 };
-
-export const isMsalConfigured = clientId !== defaultClientId;

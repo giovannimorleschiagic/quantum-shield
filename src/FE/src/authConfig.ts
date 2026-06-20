@@ -1,8 +1,8 @@
 import { Configuration, LogLevel, RedirectRequest } from "@azure/msal-browser";
 
-const clientId = "837e627e-f1a0-471f-af65-70b69f7d073d";
-const tenantId = "7f8ac17c-e18d-4f8e-a8ec-9fb46868bb8f";
-const redirectUri = "http://localhost:3000/";
+const clientId = process.env.REACT_APP_MSAL_CLIENT_ID!;
+const tenantId = process.env.REACT_APP_MSAL_TENANT_ID!;
+const redirectUri = process.env.REACT_APP_MSAL_REDIRECT_URI ?? "http://localhost:3000/";
 
 export const msalConfig: Configuration = {
   auth: {

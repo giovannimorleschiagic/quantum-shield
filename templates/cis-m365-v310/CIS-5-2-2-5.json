@@ -1,0 +1,51 @@
+{
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "control_id": "5.2.2.5",
+  "license_requirement": {
+    "minimum_license": "Microsoft Entra ID P1 o P2",
+    "license_supported": true,
+    "entra_id_tier": "P1",
+    "license_gate_message": "LICENZA OBBLIGATORIA: Le Conditional Access policies con Authentication Strength richiedono Microsoft Entra ID P1 o P2."
+  },
+  "title": "Ensure 'Phishing-resistant MFA strength' is required for Administrators",
+  "check_complexity": "complex",
+  "version": "3.1.0",
+  "complexity_notes": "Richiede 2 sub-check: (C1) esiste una Authentication Strength policy con metodi phishing-resistant (FIDO2, Windows Hello, Certificate-based), (C2) la policy CA per admin usa questa Authentication Strength (non solo 'Require MFA' generico). Richiede Entra ID P1.",
+  "checks": [
+    {
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "result": null,
+      "license_required": "Microsoft Entra ID P1",
+      "expected_result": "Esiste policy con allowedCombinations contenente 'fido2','windowsHelloForBusiness' o 'x509CertificateMultiFactor'",
+      "description": "Verificare esistenza di Authentication Strength policy con metodi phishing-resistant",
+      "check_id": "C1",
+      "status": "not_run",
+      "method": "graph_api",
+      "endpoint": "GET /policies/authenticationStrengthPolicies"
+    },
+    {
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "result": null,
+      "license_required": "Microsoft Entra ID P1",
+      "expected_result": "grantControls.authenticationStrength.id punta alla policy phishing-resistant",
+      "description": "Verificare che la policy CA per admin referenzi la Authentication Strength phishing-resistant",
+      "check_id": "C2",
+      "status": "not_run",
+      "method": "graph_api",
+      "endpoint": "GET /identity/conditionalAccess/policies"
+    }
+  ],
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/identity/authentication/concept-authentication-strengths",
+    "description": "Entra Admin Center > Protezione > Metodi di autenticazione > Punti di forza di autenticazione: creare o usare policy built-in 'Phishing-resistant MFA'. Assegnare alla CA policy per admin tramite grantControls.authenticationStrength."
+  },
+  "section": "5.2 - Authentication Methods / MFA",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/identity/authentication/concept-authentication-strengths",
+    "https://learn.microsoft.com/en-us/entra/identity/conditional-access/howto-conditional-access-policy-admin-mfa"
+  ]
+}

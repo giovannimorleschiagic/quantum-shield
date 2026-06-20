@@ -1,0 +1,61 @@
+{
+  "complexity_notes": "Richiede 3 sub-check sulle impostazioni dell'Authentication Methods policy per Microsoft Authenticator: (C1) Number Matching abilitato, (C2) Additional context abilitato, (C3) Location context abilitato. Tutte e 3 devono essere 'enabled'.",
+  "title": "Ensure Microsoft Authenticator is configured to protect against MFA fatigue",
+  "version": "3.1.0",
+  "license_requirement": {
+    "entra_id_tier": "Free",
+    "license_gate_message": null,
+    "minimum_license": "Microsoft Entra ID (qualsiasi piano)",
+    "license_supported": true
+  },
+  "section": "5.2 - Authentication Methods / MFA",
+  "remediation": {
+    "description": "Entra Admin Center > Protezione > Metodi di autenticazione > Microsoft Authenticator: abilitare 'Number matching', 'Show application name', 'Show geographic location'.",
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-mfa-number-match"
+  },
+  "control_id": "5.2.3.1",
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-mfa-number-match",
+    "https://learn.microsoft.com/en-us/entra/identity/authentication/concept-authentication-methods-manage"
+  ],
+  "check_complexity": "complex",
+  "checks": [
+    {
+      "expected_result": "featureSettings.numberMatchingRequiredState.state = 'enabled'",
+      "method": "graph_api",
+      "description": "Verificare che Number Matching sia abilitato in Microsoft Authenticator",
+      "check_id": "C1",
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "result": null,
+      "status": "not_run",
+      "endpoint": "GET /policies/authenticationMethodsPolicy/authenticationMethodConfigurations/MicrosoftAuthenticator"
+    },
+    {
+      "expected_result": "featureSettings.displayAppInformationRequiredState.state = 'enabled'",
+      "method": "graph_api",
+      "description": "Verificare che Additional context (app name) sia abilitato",
+      "check_id": "C2",
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "result": null,
+      "status": "not_run",
+      "endpoint": "GET /policies/authenticationMethodsPolicy/authenticationMethodConfigurations/MicrosoftAuthenticator"
+    },
+    {
+      "expected_result": "featureSettings.displayLocationInformationRequiredState.state = 'enabled'",
+      "method": "graph_api",
+      "description": "Verificare che Geographic location context sia abilitato",
+      "check_id": "C3",
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "result": null,
+      "status": "not_run",
+      "endpoint": "GET /policies/authenticationMethodsPolicy/authenticationMethodConfigurations/MicrosoftAuthenticator"
+    }
+  ]
+}

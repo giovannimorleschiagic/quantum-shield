@@ -1,0 +1,33 @@
+{
+  "check_complexity": "simple",
+  "license_requirement": {
+    "license_gate_message": "Richiede Microsoft Forms incluso nel piano M365. Non disponibile con standalone Exchange Online.",
+    "license_supported": true,
+    "entra_id_tier": "Free",
+    "minimum_license": "Microsoft 365 (piani che includono Microsoft Forms: Business Basic/Standard/Premium, E1/E3/E5)"
+  },
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "control_id": "1.3.5",
+  "references": [
+    "https://learn.microsoft.com/en-us/microsoft-365/admin/misc/forms-settings"
+  ],
+  "checks": [
+    {
+      "portal": "Microsoft 365 Admin Center > Impostazioni > Org Settings > Microsoft Forms",
+      "check_id": "C1",
+      "expected_result": "'Internal phishing protection' = Abilitata (spunta su 'Add internal phishing protection')",
+      "result": null,
+      "status": "not_run",
+      "description": "Verificare che la protezione phishing interna di Microsoft Forms sia abilitata",
+      "method": "manual_admin_center"
+    }
+  ],
+  "section": "1 - Microsoft 365 Administration",
+  "title": "Ensure internal phishing protection for Forms is enabled",
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/microsoft-365/admin/misc/forms-settings",
+    "description": "Microsoft 365 Admin Center > Impostazioni > Impostazioni org > Microsoft Forms: abilitare 'Aggiungi protezione interna dal phishing'."
+  },
+  "complexity_notes": "Un solo check: verifica nell'impostazione Microsoft Forms del tenant che la protezione phishing interna sia abilitata.",
+  "version": "3.1.0"
+}

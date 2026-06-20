@@ -1,0 +1,38 @@
+{
+  "complexity_notes": "Un solo check: verificare che SSPR sia abilitato per tutti gli utenti (non solo 'Selected' o nessuno). Richiede Entra ID P1.",
+  "title": "Ensure 'Self service password reset enabled' is set to 'All'",
+  "version": "3.1.0",
+  "license_requirement": {
+    "entra_id_tier": "P1",
+    "license_gate_message": "LICENZA OBBLIGATORIA: SSPR per tutti gli utenti richiede Microsoft Entra ID P1 o P2. Con Entra ID Free, SSPR è disponibile solo per gli amministratori.",
+    "minimum_license": "Microsoft Entra ID P1 o P2 (per SSPR esteso a tutti gli utenti)",
+    "license_supported": true
+  },
+  "section": "5.2 - Authentication Methods / MFA",
+  "remediation": {
+    "description": "Entra Admin Center > Protezione > Reimpostazione password self-service > Proprietà: selezionare 'Tutti'. Prerequisito: licenza Entra ID P1.",
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/identity/authentication/tutorial-enable-sspr"
+  },
+  "control_id": "5.2.4.1",
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/identity/authentication/tutorial-enable-sspr",
+    "https://learn.microsoft.com/en-us/entra/identity/authentication/concept-sspr-howitworks"
+  ],
+  "check_complexity": "simple",
+  "checks": [
+    {
+      "status": "not_run",
+      "method": "graph_api",
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "description": "Verificare che SSPR sia abilitato per tutti gli utenti",
+      "expected_result": "SSPR scope = 'All' (non 'None' né 'Selected')",
+      "endpoint": "GET /policies/authenticationMethodsPolicy?$select=selfServicePasswordResetEnabled - Alternativa: verificare tramite sspr settings",
+      "result": null,
+      "check_id": "C1",
+      "license_required": "Microsoft Entra ID P1"
+    }
+  ]
+}

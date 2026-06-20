@@ -1,0 +1,34 @@
+{
+  "check_complexity": "simple",
+  "license_requirement": {
+    "license_gate_message": null,
+    "license_supported": true,
+    "entra_id_tier": "Free",
+    "minimum_license": "Exchange Online (qualsiasi piano)"
+  },
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "control_id": "1.3.3",
+  "references": [
+    "https://learn.microsoft.com/en-us/exchange/sharing/sharing-policies/modify-a-sharing-policy",
+    "https://learn.microsoft.com/en-us/exchange/sharing/sharing-policies/sharing-policies"
+  ],
+  "checks": [
+    {
+      "expected_result": "La sharing policy predefinita non include domini esterni o FreeBusySimple/FreeBusyDetail per external",
+      "check_id": "C1",
+      "status": "not_run",
+      "result": null,
+      "cmdlet": "Get-SharingPolicy | Where-Object {$_.Default -eq $true}",
+      "description": "Verificare che la condivisione esterna del calendario sia disabilitata",
+      "method": "exchange_powershell"
+    }
+  ],
+  "section": "1 - Microsoft 365 Administration",
+  "title": "Ensure 'External sharing' of calendars is not available",
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/exchange/sharing/sharing-policies/modify-a-sharing-policy",
+    "description": "In Exchange Admin Center > Organization > Sharing: modificare la policy di condivisione predefinita per rimuovere la condivisione esterna del calendario. Oppure: Set-SharingPolicy -Identity 'Default Sharing Policy' -Domains $null."
+  },
+  "complexity_notes": "Un solo check: verificare la impostazione di condivisione calendario esterna tramite Exchange Online PowerShell.",
+  "version": "3.1.0"
+}

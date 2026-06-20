@@ -1,0 +1,36 @@
+{
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "complexity_notes": "Un solo check: policy di consenso utente. Deve essere impostata su 'Do not allow user consent' (equivalente a permissionGrantPoliciesIds = vuoto).",
+  "title": "Ensure user consent to apps accessing company data on their behalf is not allowed",
+  "check_complexity": "simple",
+  "version": "3.1.0",
+  "license_requirement": {
+    "license_gate_message": null,
+    "entra_id_tier": "Free",
+    "minimum_license": "Microsoft Entra ID (qualsiasi piano)",
+    "license_supported": true
+  },
+  "section": "5.1 - Microsoft Entra ID",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-user-consent"
+  ],
+  "checks": [
+    {
+      "result": null,
+      "expected_result": "permissionGrantPolicyIdsAssignedToDefaultUserRole = [] o non contiene 'microsoft-user-default-legacy'",
+      "endpoint": "GET /policies/authorizationPolicy?$select=permissionGrantPolicyIdsAssignedToDefaultUserRole",
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "check_id": "C1",
+      "description": "Verificare che il consenso utente alle app per l'accesso ai dati aziendali sia disabilitato",
+      "status": "not_run",
+      "method": "graph_api"
+    }
+  ],
+  "remediation": {
+    "description": "Entra Admin Center > App aziendali > Consenso e autorizzazioni > Impostazioni consenso utente: 'Non consentire il consenso utente'.",
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-user-consent"
+  },
+  "control_id": "5.1.5.2"
+}

@@ -1,0 +1,33 @@
+{
+  "check_complexity": "simple",
+  "license_requirement": {
+    "license_gate_message": null,
+    "license_supported": true,
+    "entra_id_tier": "Free",
+    "minimum_license": "Microsoft 365 (qualsiasi piano con Office web apps)"
+  },
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "control_id": "1.3.7",
+  "references": [
+    "https://learn.microsoft.com/en-us/microsoft-365/admin/misc/offboarding-items"
+  ],
+  "checks": [
+    {
+      "portal": "Microsoft 365 Admin Center > Impostazioni > Org Settings > Microsoft 365 on the web",
+      "check_id": "C1",
+      "expected_result": "Opzione 'Allow users to open files stored in third-party storage services in Microsoft 365 on the web' = Off",
+      "result": null,
+      "status": "not_run",
+      "description": "Verificare che i servizi di storage di terze parti (Dropbox, Box, Google Drive) siano disabilitati in Office on the web",
+      "method": "manual_admin_center"
+    }
+  ],
+  "section": "1 - Microsoft 365 Administration",
+  "title": "Ensure 'third-party storage services' are restricted in 'Microsoft 365 on the web'",
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/microsoft-365/admin/misc/offboarding-items",
+    "description": "Microsoft 365 Admin Center > Impostazioni > Impostazioni org > Microsoft 365 sul web: disabilitare 'Consenti agli utenti di aprire file archiviati in servizi di archiviazione di terze parti'."
+  },
+  "complexity_notes": "Un solo check: impostazione nel portale M365 Admin Center per la sezione Office on the web.",
+  "version": "3.1.0"
+}

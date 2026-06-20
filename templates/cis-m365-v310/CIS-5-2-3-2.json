@@ -1,0 +1,60 @@
+{
+  "complexity_notes": "Richiede 3 sub-check: (C1) verifica ambiente ibrido, (C2) Azure AD Password Protection agent installato e operativo su DC on-prem, (C3) modalità configurata su 'Enforced' (non solo Audit). Richiede Entra ID P1 + ambiente ibrido.",
+  "title": "Ensure password protection is enabled for on-prem Active Directory",
+  "version": "3.1.0",
+  "license_requirement": {
+    "entra_id_tier": "P1",
+    "license_gate_message": "LICENZA OBBLIGATORIA: Microsoft Entra Password Protection per Active Directory on-prem richiede Entra ID P1. Applicabile SOLO ad ambienti ibridi. In ambienti cloud-only questo controllo è N/A.",
+    "minimum_license": "Microsoft Entra ID P1 o P2 (per on-prem password protection agent)",
+    "license_supported": true
+  },
+  "section": "5.2 - Authentication Methods / MFA",
+  "remediation": {
+    "description": "1) Installare Azure AD Password Protection Proxy su un server membro. 2) Installare DC Agent su tutti i Domain Controller. 3) Registrare tramite Register-AzureADPasswordProtectionProxy e Register-AzureADPasswordProtectionForest. 4) Impostare Mode = Enforced nel portale.",
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/identity/authentication/concept-password-ban-bad-on-premises"
+  },
+  "control_id": "5.2.3.2",
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/identity/authentication/concept-password-ban-bad-on-premises",
+    "https://learn.microsoft.com/en-us/entra/identity/authentication/howto-password-ban-bad-on-premises-deploy"
+  ],
+  "check_complexity": "complex",
+  "checks": [
+    {
+      "expected_result": "onPremisesSyncEnabled = true; se false = cloud-only, controllo N/A",
+      "method": "graph_api",
+      "description": "Verificare se l'ambiente è ibrido (prerequisito per questo controllo)",
+      "check_id": "C1",
+      "graph_permissions": [
+        "Organization.Read.All"
+      ],
+      "result": null,
+      "status": "not_run",
+      "endpoint": "GET /organization?$select=onPremisesSyncEnabled"
+    },
+    {
+      "status": "not_run",
+      "method": "graph_api",
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "description": "Verificare che Azure AD Password Protection proxy e DC agent siano installati e registrati",
+      "expected_result": "Proxy agent registrato, DC agent installato su tutti i domain controller",
+      "endpoint": "GET /directory/passwordHashAuthenticationMethod - Verifica tramite Entra Admin Center > Protezione > Metodi di autenticazione > Password Protection > On-premises",
+      "result": null,
+      "check_id": "C2",
+      "license_required": "Microsoft Entra ID P1"
+    },
+    {
+      "expected_result": "Mode = Enforced (non Audit)",
+      "method": "manual_admin_center",
+      "description": "Verificare che la modalità operativa sia 'Enforced' e non solo 'Audit'",
+      "portal": "Entra Admin Center > Protezione > Metodi di autenticazione > Password Protection > Mode",
+      "check_id": "C3",
+      "status": "not_run",
+      "license_required": "Microsoft Entra ID P1",
+      "result": null
+    }
+  ]
+}

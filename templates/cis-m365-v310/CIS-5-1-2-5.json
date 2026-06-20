@@ -1,0 +1,36 @@
+{
+  "checks": [
+    {
+      "expected_result": "hideKeepMeSignedIn = true nel Company Branding",
+      "graph_permissions": [
+        "Organization.Read.All"
+      ],
+      "description": "Verificare che l'opzione 'Rimani connesso' sia nascosta agli utenti",
+      "status": "not_run",
+      "result": null,
+      "method": "graph_api",
+      "endpoint": "GET /organization/{id}?$select=id - poi verificare tramite Get-MgOrganization o portale",
+      "check_id": "C1"
+    }
+  ],
+  "title": "Ensure the option to remain signed in is hidden",
+  "complexity_notes": "Un solo check: impostazione di branding del tenant per nascondere 'Stay signed in?'",
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding",
+    "description": "Entra Admin Center > Branding aziendale > Modifica > nella scheda Avanzate: 'Show option to remain signed in' = No. Oppure: Update-MgOrganizationalBranding -BodyParameter @{hideKeepMeSignedIn=$true}."
+  },
+  "section": "5.1 - Microsoft Entra ID",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/fundamentals/how-to-customize-branding"
+  ],
+  "control_id": "5.1.2.5",
+  "license_requirement": {
+    "license_gate_message": null,
+    "minimum_license": "Microsoft Entra ID (qualsiasi piano)",
+    "license_supported": true,
+    "entra_id_tier": "Free"
+  },
+  "version": "3.1.0",
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "check_complexity": "simple"
+}

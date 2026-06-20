@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="QuantumShield.Be.Api/QuantumShield.Be.Api.csproj" />
+  <Project Path="QuantumShield.Be.Business/QuantumShield.Be.Business.csproj" />
+  <Project Path="QuantumShield.Be.Domain/QuantumShield.Be.Domain.csproj" />
+  <Project Path="QuantumShield.Be.Infrastructure/QuantumShield.Be.Infrastructure.csproj" />
+  <Project Path="QuantumShield.Be.Tests/QuantumShield.Be.Tests.csproj" />
+</Solution>

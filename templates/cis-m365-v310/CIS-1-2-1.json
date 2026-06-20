@@ -1,0 +1,36 @@
+{
+  "check_complexity": "simple",
+  "license_requirement": {
+    "license_gate_message": null,
+    "license_supported": true,
+    "entra_id_tier": "Free",
+    "minimum_license": "Microsoft 365 (qualsiasi piano)"
+  },
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "control_id": "1.2.1",
+  "references": [
+    "https://learn.microsoft.com/en-us/microsoft-365/admin/create-groups/manage-creation-of-groups"
+  ],
+  "checks": [
+    {
+      "graph_permissions": [
+        "Group.Read.All"
+      ],
+      "endpoint": "GET /groups?$filter=visibility eq 'Public' and groupTypes/any(c:c eq 'Unified')&$select=id,displayName,visibility,mail,createdDateTime",
+      "method": "graph_api",
+      "result": null,
+      "status": "not_run",
+      "expected_result": "Tutti i gruppi pubblici sono approvati dall'organizzazione",
+      "check_id": "C1",
+      "description": "Elencare tutti i Microsoft 365 Groups con visibility Public"
+    }
+  ],
+  "section": "1 - Microsoft 365 Administration",
+  "title": "Ensure that only organizationally managed/approved public groups exist",
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/microsoft-365/admin/create-groups/manage-creation-of-groups",
+    "description": "Rivedere tutti i gruppi pubblici. Convertire in privati quelli non approvati o eliminare quelli non necessari. Impostare policy per limitare la creazione di gruppi pubblici."
+  },
+  "complexity_notes": "Un solo check: elencare tutti i Microsoft 365 Groups con visibility=Public. Il risultato richiede review manuale per verificare approvazione organizzativa.",
+  "version": "3.1.0"
+}

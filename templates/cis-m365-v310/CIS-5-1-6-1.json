@@ -1,0 +1,37 @@
+{
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "complexity_notes": "Un solo check: verifica la External Collaboration Settings (allowlist o blocklist dei domini per inviti guest).",
+  "title": "Ensure that collaboration invitations are sent to allowed domains only",
+  "check_complexity": "simple",
+  "version": "3.1.0",
+  "license_requirement": {
+    "license_gate_message": null,
+    "entra_id_tier": "Free",
+    "minimum_license": "Microsoft Entra ID (qualsiasi piano)",
+    "license_supported": true
+  },
+  "section": "5.1 - Microsoft Entra ID",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/external-id/allow-deny-list",
+    "https://learn.microsoft.com/en-us/entra/external-id/external-collaboration-settings-configure"
+  ],
+  "checks": [
+    {
+      "result": null,
+      "expected_result": "allowInvitesFrom = 'adminsAndGuestInviters' e lista domini allowlist configurata in External Collaboration Settings",
+      "endpoint": "GET /policies/authorizationPolicy - e GET /policies/externalIdentitiesPolicy",
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "check_id": "C1",
+      "description": "Verificare che gli inviti di collaborazione esterna siano limitati a domini approvati",
+      "status": "not_run",
+      "method": "graph_api"
+    }
+  ],
+  "remediation": {
+    "description": "Entra Admin Center > Identità esterne > Impostazioni collaborazione esterna: selezionare 'Only users from specific partner domains can be invited' e aggiungere i domini approvati.",
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/external-id/allow-deny-list"
+  },
+  "control_id": "5.1.6.1"
+}

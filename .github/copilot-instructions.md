@@ -22,6 +22,7 @@ Carica solo il file rilevante al task che stai svolgendo.
 | [`doc/backend-architecture.md`](../doc/backend-architecture.md) | Layer BE (Api/Business/Domain/Infrastructure), DI, interfacce nel Domain, DbContext, sezioni di configurazione |
 | [`doc/backend-domain.md`](../doc/backend-domain.md) | Modelli di dominio, state machine EvaluationRun, `ITenantCredentialProvider`, enums, pattern costruttori privati |
 | [`doc/infrastructure.md`](../doc/infrastructure.md) | Terraform `src/GW/`: risorse Azure provisionate, variabili, naming convention, comandi |
+| [`doc/Quantum Shield - Infrastructure Design Document.md`](<../doc/Quantum Shield - Infrastructure Design Document.md>) | Documento formale IDD: architettura AppGW, App Service, networking, ambienti, evoluzioni previste |
 | [`doc/templates.md`](../doc/templates.md) | Template CIS M365 v3.1.0: schema JSON, metodi di verifica, licenze, permessi Graph, come BE li consuma |
 
 ### Frontend

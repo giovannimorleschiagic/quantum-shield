@@ -4,7 +4,7 @@
 
 | Campo | Valore |
 |---|---|
-| Versione | 1.0 |
+| Versione | 1.1 |
 | Data | Giugno 2026 |
 | Stato | In revisione |
 | Classificazione | Riservato — uso interno |
@@ -58,20 +58,19 @@ Il diagramma dell'infrastruttura Azure è disponibile in [`architettura.drawio.p
 Internet
    │
    ▼
-[Application Gateway + WAF]
+[Application Gateway v2 — Standard_v2]
+   │  (HTTP :80 pubblico → HTTPS :443 verso backend)
    │
-   ├──► [Frontend React SPA]
-   │         │
-   │         ▼
-   └──► [API BE — Azure App Service]
+   └──► [API BE — Azure App Service (Linux, .NET 10)]
               │
               ├──► [Azure SQL Database]        (Tenants, EvaluationRuns, EvaluationResults)
-              ├──► [Azure Blob Storage]         (Template JSON di valutazione)
-              ├──► [Azure Key Vault]            (Secret dei tenant clienti)
+              ├──► [Azure Blob Storage]         (Template JSON di valutazione CIS M365)
+              ├──► [Azure Key Vault]            (Secret dei tenant clienti — URI versioned)
               ├──► [Application Insights]       (Telemetria e logging)
-              └──► [Microsoft Graph API]        (Raccolta configurazioni tenant)
+              └──► [Microsoft Graph API]        (Raccolta configurazioni tenant — read-only)
 
 Shared Resources: App Service Plan · Key Vault · Application Insights
+Infrastruttura-as-Code: Terraform (src/GW/) — provider azurerm ~> 4.34
 ```
 
 ---

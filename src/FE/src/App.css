@@ -1,0 +1,107 @@
+.App {
+  min-height: 100vh;
+  text-align: left;
+  background:
+    radial-gradient(circle at top, rgba(42, 93, 129, 0.35), transparent 45%),
+    linear-gradient(135deg, #09121d 0%, #102437 55%, #0c1722 100%);
+}
+
+.App-header {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  color: #f3f7fb;
+}
+
+.App-panel {
+  width: min(720px, 100%);
+  padding: 32px;
+  border: 1px solid rgba(150, 200, 255, 0.18);
+  border-radius: 24px;
+  background: rgba(7, 17, 27, 0.78);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(12px);
+}
+
+.App-eyebrow {
+  display: inline-block;
+  margin-bottom: 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #7ec8ff;
+}
+
+.App-panel h1 {
+  margin: 0 0 16px;
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.App-description,
+.App-hint,
+.App-status,
+.App-result {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.App-description,
+.App-hint {
+  margin: 0 0 20px;
+  color: #c6d6e5;
+}
+
+.App-status {
+  margin-bottom: 12px;
+}
+
+.App-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 28px 0 20px;
+}
+
+.App-button {
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 22px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+.App-button:hover:enabled {
+  transform: translateY(-1px);
+}
+
+.App-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.App-buttonPrimary {
+  color: #062033;
+  background: linear-gradient(135deg, #8fd3ff 0%, #55b7ff 100%);
+  box-shadow: 0 14px 35px rgba(85, 183, 255, 0.32);
+}
+
+.App-buttonSecondary {
+  color: #eef6ff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.App-result {
+  margin: 20px 0 0;
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #d7e7f5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}

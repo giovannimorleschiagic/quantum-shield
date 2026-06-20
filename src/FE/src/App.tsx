@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { InteractionStatus } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
 import "./App.css";
-import { isMsalConfigured, loginRequest } from "./authConfig";
+import {  loginRequest } from "./authConfig";
 
 function App() {
   const { instance, accounts, inProgress } = useMsal();
@@ -10,11 +10,18 @@ function App() {
 
   const isBusy = inProgress !== InteractionStatus.None;
   const activeAccount = accounts[0];
+  const prevAccount = useRef<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (inProgress === InteractionStatus.None && activeAccount && prevAccount.current !== activeAccount.username) {
+      prevAccount.current = activeAccount.username;
+      setResultMessage(`Login completato per ${activeAccount.username}.`);
+    }
+  }, [inProgress, activeAccount]);
 
   const handleLogin = async () => {
     try {
-      const response = await instance.loginPopup(loginRequest);
-      setResultMessage(`Login completato per ${response.account?.username || "utente sconosciuto"}.`);
+      await instance.loginRedirect(loginRequest);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Errore sconosciuto durante il login.";
       setResultMessage(message);
@@ -23,11 +30,10 @@ function App() {
 
   const handleLogout = async () => {
     try {
-      await instance.logoutPopup({
+      await instance.logoutRedirect({
         account: activeAccount,
         postLogoutRedirectUri: window.location.origin,
       });
-      setResultMessage("Logout completato.");
     } catch (error) {
       const message = error instanceof Error ? error.message : "Errore sconosciuto durante il logout.";
       setResultMessage(message);
@@ -45,9 +51,6 @@ function App() {
           </p>
 
           <div className="App-status" aria-live="polite">
-            <strong>Configurazione:</strong> {isMsalConfigured ? "pronta" : "mancano le variabili REACT_APP_AZURE_*"}
-          </div>
-          <div className="App-status" aria-live="polite">
             <strong>Utente corrente:</strong> {activeAccount?.username || "nessuno"}
           </div>
 
@@ -55,7 +58,6 @@ function App() {
             <button
               className="App-button App-buttonPrimary"
               onClick={handleLogin}
-              disabled={!isMsalConfigured || isBusy}
             >
               {isBusy ? "Operazione in corso..." : "Test login MSAL"}
             </button>
@@ -67,11 +69,6 @@ function App() {
               Test logout
             </button>
           </div>
-
-          <p className="App-hint">
-            Imposta `REACT_APP_AZURE_CLIENT_ID`, `REACT_APP_AZURE_TENANT_ID` e opzionalmente
-            `REACT_APP_AZURE_REDIRECT_URI` per collegarti al tuo tenant.
-          </p>
 
           {resultMessage && <pre className="App-result">{resultMessage}</pre>}
         </div>

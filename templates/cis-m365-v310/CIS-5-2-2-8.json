@@ -1,0 +1,51 @@
+{
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "control_id": "5.2.2.8",
+  "license_requirement": {
+    "minimum_license": "Microsoft Entra ID P1 o P2",
+    "license_supported": true,
+    "entra_id_tier": "P1",
+    "license_gate_message": "LICENZA OBBLIGATORIA: Le Conditional Access policies richiedono Microsoft Entra ID P1 o P2."
+  },
+  "title": "Ensure admin center access is limited to administrative roles",
+  "check_complexity": "complex",
+  "version": "3.1.0",
+  "complexity_notes": "Richiede 2 sub-check: (C1) policy CA abilitata che limita l'accesso al Microsoft Admin Center (app 'Microsoft Admin Portals') ai soli utenti con ruoli admin, (C2) la policy blocca l'accesso agli utenti non-admin. Richiede Entra ID P1.",
+  "checks": [
+    {
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "result": null,
+      "license_required": "Microsoft Entra ID P1",
+      "expected_result": "Policy CA abilitata con cloudApps includendo Microsoft Admin Portals",
+      "description": "Verificare esistenza di policy CA che target 'Microsoft Admin Portals' (app ID: 00000006-0000-0ff1-ce00-000000000000)",
+      "check_id": "C1",
+      "status": "not_run",
+      "method": "graph_api",
+      "endpoint": "GET /identity/conditionalAccess/policies?$filter=state eq 'enabled'"
+    },
+    {
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "result": null,
+      "license_required": "Microsoft Entra ID P1",
+      "expected_result": "grantControls.operator = 'OR' e builtInControls = ['block'] per utenti non-admin, o includeUsers limitato a ruoli admin",
+      "description": "La policy blocca l'accesso agli utenti non-admin (grant=Block o include solo ruoli admin)",
+      "check_id": "C2",
+      "status": "not_run",
+      "method": "graph_api",
+      "endpoint": "GET /identity/conditionalAccess/policies/{id}"
+    }
+  ],
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/identity/conditional-access/howto-conditional-access-policy-block-access",
+    "description": "Creare policy CA: Cloud apps = Microsoft Admin Portals, Users = All > escludere ruoli admin, Grant = Block. In alternativa: includeRoles solo per admin e Block per tutti gli altri."
+  },
+  "section": "5.2 - Authentication Methods / MFA",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/identity/conditional-access/howto-conditional-access-policy-block-access",
+    "https://learn.microsoft.com/en-us/entra/identity/conditional-access/concept-conditional-access-cloud-apps"
+  ]
+}

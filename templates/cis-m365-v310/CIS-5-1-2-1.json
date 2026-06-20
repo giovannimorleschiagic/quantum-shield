@@ -1,0 +1,37 @@
+{
+  "checks": [
+    {
+      "expected_result": "Nessun utente con strongAuthenticationRequirements.state = Enabled o Enforced",
+      "graph_permissions": [
+        "Reports.Read.All",
+        "UserAuthenticationMethod.Read.All"
+      ],
+      "description": "Verificare che nessun utente abbia Per-user MFA in stato 'Enabled' o 'Enforced'",
+      "status": "not_run",
+      "result": null,
+      "method": "graph_api",
+      "endpoint": "GET /reports/authenticationMethods/userRegistrationDetails?$filter=isMfaRegistered eq true&$select=userPrincipalName,isMfaRegistered,defaultMfaMethod",
+      "check_id": "C1"
+    }
+  ],
+  "title": "Ensure 'Per-user MFA' is disabled",
+  "complexity_notes": "Un solo check: verificare che nessun utente abbia Per-user MFA in stato Enabled o Enforced. Il controllo MFA deve avvenire via Conditional Access.",
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/identity/authentication/howto-mfa-userstates",
+    "description": "Disabilitare Per-user MFA per tutti gli utenti dal portale legacy MFA (https://account.activedirectory.windowsazure.com/UserManagement/MultifactorVerification.aspx). Gestire MFA esclusivamente tramite Conditional Access."
+  },
+  "section": "5.1 - Microsoft Entra ID",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/identity/authentication/howto-mfa-userstates"
+  ],
+  "control_id": "5.1.2.1",
+  "license_requirement": {
+    "license_gate_message": null,
+    "minimum_license": "Microsoft Entra ID (qualsiasi piano)",
+    "license_supported": true,
+    "entra_id_tier": "Free"
+  },
+  "version": "3.1.0",
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "check_complexity": "simple"
+}

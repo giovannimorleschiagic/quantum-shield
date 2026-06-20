@@ -1,0 +1,49 @@
+{
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "complexity_notes": "Richiede 2 sub-check: (C1) verificare se l'ambiente è ibrido (Azure AD Connect installato), (C2) se ibrido verificare che il metodo di sincronizzazione sia Password Hash Sync (PHS) e non solo PTA o Federation senza PHS abilitato come fallback.",
+  "title": "Ensure that password hash sync is enabled for hybrid deployments",
+  "check_complexity": "complex",
+  "version": "3.1.0",
+  "license_requirement": {
+    "license_gate_message": "Applicabile SOLO ad ambienti ibridi con Azure AD Connect. In ambienti cloud-only questo controllo è N/A.",
+    "entra_id_tier": "Free",
+    "minimum_license": "Microsoft Entra ID (qualsiasi piano) + Azure AD Connect (gratuito)",
+    "license_supported": true
+  },
+  "section": "5.1 - Microsoft Entra ID",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/whatis-phs",
+    "https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/how-to-connect-password-hash-synchronization"
+  ],
+  "checks": [
+    {
+      "result": null,
+      "expected_result": "onPremisesSyncEnabled = true per ambienti ibridi; se false = cloud-only, controllo N/A",
+      "endpoint": "GET /organization?$select=onPremisesSyncEnabled",
+      "graph_permissions": [
+        "Organization.Read.All"
+      ],
+      "check_id": "C1",
+      "description": "Verificare se il tenant ha sincronizzazione ibrida attiva (Azure AD Connect)",
+      "status": "not_run",
+      "method": "graph_api"
+    },
+    {
+      "result": null,
+      "expected_result": "Password Hash Sync abilitato in Azure AD Connect (passwordHashSyncEnabled = true)",
+      "endpoint": "GET /organization?$select=onPremisesLastSyncDateTime,onPremisesSyncEnabled - dettagli PHS tramite Azure AD Connect Health o Get-ADSyncScheduler (on-prem PowerShell)",
+      "graph_permissions": [
+        "Organization.Read.All"
+      ],
+      "check_id": "C2",
+      "description": "Se ibrido: verificare che Password Hash Sync sia abilitato come metodo di sincronizzazione",
+      "status": "not_run",
+      "method": "graph_api"
+    }
+  ],
+  "remediation": {
+    "description": "Se PHS non è abilitato: Azure AD Connect wizard > Change user sign-in > abilitare Password hash synchronization. Vedere documentazione Microsoft per migrazione da Federation/PTA a PHS.",
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/whatis-phs"
+  },
+  "control_id": "5.1.8.1"
+}

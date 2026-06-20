@@ -1,0 +1,36 @@
+{
+  "checks": [
+    {
+      "expected_result": "restrictNonAdminUsers = true (Entra portal restricted) - verificare impostazione 'Restrict access to Azure AD administration portal'",
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "description": "Verificare che l'accesso al portale di amministrazione Entra ID sia limitato agli admin",
+      "status": "not_run",
+      "result": null,
+      "method": "graph_api",
+      "endpoint": "GET /policies/authorizationPolicy?$select=blockMsolPowerShell,allowedToUseSSPR",
+      "check_id": "C1"
+    }
+  ],
+  "title": "Ensure 'Restrict access to the Azure AD administration portal' is set to 'Yes'",
+  "complexity_notes": "Un solo check: verifica che l'accesso al portale Entra/Azure AD sia limitato agli amministratori.",
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/fundamentals/users-default-permissions#restrict-member-users-default-permissions",
+    "description": "Entra Admin Center > Impostazioni utente > Restrict access to Microsoft Entra admin center = Yes."
+  },
+  "section": "5.1 - Microsoft Entra ID",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/fundamentals/users-default-permissions#restrict-member-users-default-permissions"
+  ],
+  "control_id": "5.1.2.4",
+  "license_requirement": {
+    "license_gate_message": null,
+    "minimum_license": "Microsoft Entra ID (qualsiasi piano)",
+    "license_supported": true,
+    "entra_id_tier": "Free"
+  },
+  "version": "3.1.0",
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "check_complexity": "simple"
+}

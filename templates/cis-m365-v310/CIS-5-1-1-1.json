@@ -1,0 +1,36 @@
+{
+  "checks": [
+    {
+      "expected_result": "isEnabled = false",
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "description": "Verificare che Security Defaults siano disabilitati nel tenant",
+      "status": "not_run",
+      "result": null,
+      "method": "graph_api",
+      "endpoint": "GET /policies/identitySecurityDefaultsEnforcementPolicy",
+      "check_id": "C1"
+    }
+  ],
+  "title": "Ensure Security Defaults is disabled on Azure Active Directory",
+  "complexity_notes": "Un solo check: verificare che Security Defaults siano disabilitati (prerequisito per usare Conditional Access personalizzato). Disabilitare SOLO se CA policies sono già configurate.",
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/fundamentals/security-defaults",
+    "description": "Entra Admin Center > Proprietà > Gestisci impostazioni predefinite sicurezza > Disabilita. ATTENZIONE: disabilitare solo dopo aver configurato policy CA equivalenti o più restrittive."
+  },
+  "section": "5.1 - Microsoft Entra ID",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/fundamentals/security-defaults"
+  ],
+  "control_id": "5.1.1.1",
+  "license_requirement": {
+    "license_gate_message": null,
+    "minimum_license": "Microsoft Entra ID (qualsiasi piano)",
+    "license_supported": true,
+    "entra_id_tier": "Free"
+  },
+  "version": "3.1.0",
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "check_complexity": "simple"
+}

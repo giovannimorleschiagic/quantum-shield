@@ -1,0 +1,48 @@
+{
+  "license_requirement": {
+    "license_supported": true,
+    "minimum_license": "Microsoft 365 (qualsiasi piano) - Access Reviews richiede Entra ID P2",
+    "entra_id_tier": "Free (P2 per automazione)",
+    "license_gate_message": "Access Reviews automatizzate richiedono Microsoft Entra ID P2 o Microsoft Entra ID Governance. Senza P2 la review deve essere manuale."
+  },
+  "section": "1 - Account / Authentication",
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "checks": [
+    {
+      "license_required": "Microsoft Entra ID P2",
+      "expected_result": "Access review attiva con recurrenceSettings.interval <= 14 giorni",
+      "endpoint": "GET /identityGovernance/accessReviews/definitions?$filter=contains(scope/query,'/guests')",
+      "check_id": "C1",
+      "description": "Verificare che esista un Access Review attivo per Guest Users con cadenza <= 14 giorni (richiede Entra P2)",
+      "method": "graph_api",
+      "result": null,
+      "graph_permissions": [
+        "AccessReview.Read.All"
+      ],
+      "status": "not_run"
+    },
+    {
+      "graph_permissions": [],
+      "method": "manual",
+      "endpoint": null,
+      "result": null,
+      "check_id": "C2",
+      "expected_result": "Processo documentato e audit log che mostra review bisettimanali",
+      "description": "In assenza di Entra P2: verificare esistenza di processo manuale documentato con cadenza <= 14 giorni",
+      "status": "not_run"
+    }
+  ],
+  "title": "Ensure Guest Users are reviewed at least biweekly",
+  "version": "3.1.0",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/id-governance/access-reviews-overview",
+    "https://learn.microsoft.com/en-us/entra/id-governance/create-access-review"
+  ],
+  "control_id": "1.1.4",
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/id-governance/access-reviews-overview",
+    "description": "Configurare Access Reviews in Entra Identity Governance per guest users con frequenza bisettimanale. Alternativa: processo manuale documentato tramite report 'Get-MgUser -Filter userType eq Guest'."
+  },
+  "complexity_notes": "Richiede 2 sub-check: (C1) verifica automatica tramite Access Reviews (richiede Entra ID P2) oppure (C2) verifica manuale del processo documentato. Se Entra P2 non disponibile, il check C1 riporta 'license_not_available' e C2 diventa obbligatorio.",
+  "check_complexity": "complex"
+}

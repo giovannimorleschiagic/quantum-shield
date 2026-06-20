@@ -1,0 +1,37 @@
+{
+  "checks": [
+    {
+      "status": "not_run",
+      "method": "graph_api",
+      "check_id": "C1",
+      "expected_result": "Esiste almeno un gruppo con membershipRule contenente 'user.userType -eq Guest'",
+      "result": null,
+      "graph_permissions": [
+        "Group.Read.All"
+      ],
+      "license_required": "Microsoft Entra ID P1",
+      "description": "Verificare che esista almeno un gruppo dinamico con regola di appartenenza per guest users",
+      "endpoint": "GET /groups?$filter=groupTypes/any(c:c eq 'DynamicMembership')&$select=id,displayName,membershipRule,membershipRuleProcessingState"
+    }
+  ],
+  "title": "Ensure a dynamic group for guest users is created",
+  "complexity_notes": "Un solo check: verificare esistenza gruppo dinamico con membership rule per userType=Guest. Richiede Entra ID P1.",
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/identity/users/groups-dynamic-membership",
+    "description": "Entra Admin Center > Gruppi > Nuovo gruppo > Tipo appartenenza: Utente dinamico > Regola: (user.userType -eq 'Guest'). Prerequisito: licenza Entra ID P1."
+  },
+  "section": "5.1 - Microsoft Entra ID",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/identity/users/groups-dynamic-membership"
+  ],
+  "control_id": "5.1.3.1",
+  "license_requirement": {
+    "license_gate_message": "LICENZA OBBLIGATORIA: I gruppi dinamici richiedono Microsoft Entra ID P1 o P2. Senza questa licenza non è possibile creare Dynamic Groups.",
+    "minimum_license": "Microsoft Entra ID P1 o P2",
+    "license_supported": true,
+    "entra_id_tier": "P1"
+  },
+  "version": "3.1.0",
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "check_complexity": "simple"
+}

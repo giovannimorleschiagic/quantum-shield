@@ -1,0 +1,36 @@
+{
+  "check_complexity": "simple",
+  "license_requirement": {
+    "license_gate_message": null,
+    "license_supported": true,
+    "entra_id_tier": "Free",
+    "minimum_license": "Exchange Online (qualsiasi piano)"
+  },
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "control_id": "1.2.2",
+  "references": [
+    "https://learn.microsoft.com/en-us/microsoft-365/admin/email/create-a-shared-mailbox#block-sign-in-for-the-shared-mailbox-account"
+  ],
+  "checks": [
+    {
+      "graph_permissions": [
+        "User.Read.All"
+      ],
+      "endpoint": "GET /users?$filter=accountEnabled eq true&$select=id,displayName,userPrincipalName,accountEnabled - filtrare poi per RecipientTypeDetails=SharedMailbox via Exchange",
+      "method": "graph_api",
+      "result": null,
+      "status": "not_run",
+      "expected_result": "Tutti i shared mailbox hanno accountEnabled=false",
+      "check_id": "C1",
+      "description": "Verificare che tutti gli account associati a shared mailbox abbiano il sign-in bloccato (accountEnabled=false)"
+    }
+  ],
+  "section": "1 - Microsoft 365 Administration",
+  "title": "Ensure sign-in to shared mailboxes is blocked",
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/microsoft-365/admin/email/create-a-shared-mailbox#block-sign-in-for-the-shared-mailbox-account",
+    "description": "Eseguire: Set-MsolUser -UserPrincipalName <UPN> -BlockCredential $true oppure via Exchange Admin Center > Recipients > Mailboxes > selezionare shared mailbox e bloccare sign-in."
+  },
+  "complexity_notes": "Un solo check: verificare che tutti i shared mailbox abbiano BlockCredentials=true (AccountEnabled=false in Entra). Due metodi alternativi: Graph API o Exchange PowerShell.",
+  "version": "3.1.0"
+}

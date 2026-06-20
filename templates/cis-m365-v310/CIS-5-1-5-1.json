@@ -1,0 +1,36 @@
+{
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "complexity_notes": "Check principalmente manuale/procedurale: verificare che esista un processo documentato di revisione settimanale del report. Si può automatizzare la verifica dell'esistenza del report tramite API.",
+  "title": "Ensure the Application Usage report is reviewed at least weekly",
+  "check_complexity": "simple",
+  "version": "3.1.0",
+  "license_requirement": {
+    "license_gate_message": null,
+    "entra_id_tier": "Free",
+    "minimum_license": "Microsoft 365 (qualsiasi piano)",
+    "license_supported": true
+  },
+  "section": "5.1 - Microsoft Entra ID",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/identity/monitoring-health/concept-usage-insights-report"
+  ],
+  "checks": [
+    {
+      "result": null,
+      "expected_result": "Il report è accessibile e viene consultato almeno settimanalmente (verifica procedurale)",
+      "endpoint": "GET /reports/getAzureADApplicationSignInSummary(period='D7')",
+      "graph_permissions": [
+        "Reports.Read.All"
+      ],
+      "check_id": "C1",
+      "description": "Verificare esistenza e accesso al report Application Usage in Entra ID",
+      "status": "not_run",
+      "method": "graph_api"
+    }
+  ],
+  "remediation": {
+    "description": "Entra Admin Center > Monitoraggio > Report utilizzo e informazioni dettagliate: verificare settimanalmente le app con accessi anomali. Impostare alert automatici in Microsoft Sentinel.",
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/identity/monitoring-health/concept-usage-insights-report"
+  },
+  "control_id": "5.1.5.1"
+}

@@ -1,0 +1,51 @@
+{
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "control_id": "5.2.2.4",
+  "license_requirement": {
+    "minimum_license": "Microsoft Entra ID P1 o P2",
+    "license_supported": true,
+    "entra_id_tier": "P1",
+    "license_gate_message": "LICENZA OBBLIGATORIA: Le Conditional Access policies richiedono Microsoft Entra ID P1 o P2."
+  },
+  "title": "Ensure Sign-in frequency is enabled and browser sessions are not persistent for Administrative users",
+  "check_complexity": "complex",
+  "version": "3.1.0",
+  "complexity_notes": "Richiede 2 sub-check distinti in Conditional Access: (C1) Sign-in frequency policy per admin <=1 ora, (C2) Persistent browser session = 'Never persistent' per admin. Entrambe le impostazioni devono essere configurate nella session controls della policy CA.",
+  "checks": [
+    {
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "result": null,
+      "license_required": "Microsoft Entra ID P1",
+      "expected_result": "sessionControls.signInFrequency.value <= 1 e type = 'hours' per policy targeting admin roles",
+      "description": "Verificare policy CA con Sign-in frequency <= 1 ora per ruoli admin",
+      "check_id": "C1",
+      "status": "not_run",
+      "method": "graph_api",
+      "endpoint": "GET /identity/conditionalAccess/policies"
+    },
+    {
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "result": null,
+      "license_required": "Microsoft Entra ID P1",
+      "expected_result": "sessionControls.persistentBrowser.mode = 'never'",
+      "description": "Verificare policy CA con Persistent browser session = Never persistent per admin",
+      "check_id": "C2",
+      "status": "not_run",
+      "method": "graph_api",
+      "endpoint": "GET /identity/conditionalAccess/policies/{id}"
+    }
+  ],
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/identity/conditional-access/howto-policy-session-sign-in-frequency",
+    "description": "Creare o aggiornare policy CA per admin: Session controls > Sign-in frequency = 1 ora + Persistent browser session = Never persistent. Applicare ai ruoli privilegiati."
+  },
+  "section": "5.2 - Authentication Methods / MFA",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/identity/conditional-access/howto-policy-session-sign-in-frequency",
+    "https://learn.microsoft.com/en-us/entra/identity/conditional-access/concept-session-lifetime"
+  ]
+}

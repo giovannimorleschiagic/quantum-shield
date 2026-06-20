@@ -1,0 +1,36 @@
+{
+  "checks": [
+    {
+      "expected_result": "allowedToCreateTenants = false",
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "description": "Verificare che la creazione di tenant da parte di utenti non-admin sia disabilitata",
+      "status": "not_run",
+      "result": null,
+      "method": "graph_api",
+      "endpoint": "GET /policies/authorizationPolicy?$select=allowedToCreateTenants",
+      "check_id": "C1"
+    }
+  ],
+  "title": "Ensure 'Restrict non-admin users from creating tenants' is set to 'Yes'",
+  "complexity_notes": "Un solo check: impostazione nella Authorization Policy.",
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/fundamentals/users-default-permissions",
+    "description": "Entra Admin Center > Impostazioni utente > Gestisci le impostazioni di accesso esterno > Restrict non-admin users from creating tenants = Yes. Oppure via Graph: PATCH /policies/authorizationPolicy con allowedToCreateTenants=false."
+  },
+  "section": "5.1 - Microsoft Entra ID",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/fundamentals/users-default-permissions"
+  ],
+  "control_id": "5.1.2.3",
+  "license_requirement": {
+    "license_gate_message": null,
+    "minimum_license": "Microsoft Entra ID (qualsiasi piano)",
+    "license_supported": true,
+    "entra_id_tier": "Free"
+  },
+  "version": "3.1.0",
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "check_complexity": "simple"
+}

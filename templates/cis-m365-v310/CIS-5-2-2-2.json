@@ -1,0 +1,62 @@
+{
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "control_id": "5.2.2.2",
+  "license_requirement": {
+    "minimum_license": "Microsoft Entra ID P1 o P2",
+    "license_supported": true,
+    "entra_id_tier": "P1",
+    "license_gate_message": "LICENZA OBBLIGATORIA: Le Conditional Access policies richiedono Microsoft Entra ID P1 o P2."
+  },
+  "title": "Ensure multifactor authentication is enabled for all users",
+  "check_complexity": "complex",
+  "version": "3.1.0",
+  "complexity_notes": "Richiede 3 sub-check: (C1) policy CA per tutti gli utenti con MFA, (C2) copertura verificata (no user exclusion eccessiva), (C3) report MFA registration status. Richiede Entra ID P1.",
+  "checks": [
+    {
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "result": null,
+      "license_required": "Microsoft Entra ID P1",
+      "expected_result": "Policy CA con includeUsers='All' e grantControls che richiedono MFA",
+      "description": "Verifica esistenza di policy CA abilitata che target tutti gli utenti con requisito MFA",
+      "check_id": "C1",
+      "status": "not_run",
+      "method": "graph_api",
+      "endpoint": "GET /identity/conditionalAccess/policies?$filter=state eq 'enabled'"
+    },
+    {
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "result": null,
+      "license_required": "Microsoft Entra ID P1",
+      "expected_result": "excludedUsers contiene solo account break-glass documentati",
+      "description": "Verificare che le esclusioni dalla policy non siano eccessive",
+      "check_id": "C2",
+      "status": "not_run",
+      "method": "graph_api",
+      "endpoint": "GET /identity/conditionalAccess/policies/{id}?$select=conditions"
+    },
+    {
+      "method": "graph_api",
+      "status": "not_run",
+      "description": "Verificare che tutti gli utenti abbiano completato la registrazione MFA",
+      "result": null,
+      "graph_permissions": [
+        "Reports.Read.All"
+      ],
+      "endpoint": "GET /reports/authenticationMethods/userRegistrationDetails?$filter=isMfaRegistered eq false",
+      "check_id": "C3",
+      "expected_result": "Nessun utente attivo senza registrazione MFA"
+    }
+  ],
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/identity/conditional-access/howto-conditional-access-policy-all-users-mfa",
+    "description": "Creare policy CA: Tutti gli utenti, Tutte le cloud app, Grant=Richiedi MFA. Usare Authenticator app come metodo preferito. Escludere solo break-glass."
+  },
+  "section": "5.2 - Authentication Methods / MFA",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/identity/conditional-access/howto-conditional-access-policy-all-users-mfa"
+  ]
+}

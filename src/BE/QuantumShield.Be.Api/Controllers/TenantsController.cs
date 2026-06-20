@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using QuantumShield.Be.Api.Contracts;
-using QuantumShield.Be.Business.Services;
 using QuantumShield.Be.Domain.Exceptions;
+using QuantumShield.Be.Domain.Interfaces;
 
 namespace QuantumShield.Be.Api.Controllers;
 
@@ -9,9 +9,9 @@ namespace QuantumShield.Be.Api.Controllers;
 [Route("api/tenants")]
 public sealed class TenantsController : ControllerBase
 {
-    private readonly TenantService _tenantService;
+    private readonly ITenantService _tenantService;
 
-    public TenantsController(TenantService tenantService)
+    public TenantsController(ITenantService tenantService)
     {
         _tenantService = tenantService;
     }
@@ -39,7 +39,7 @@ public sealed class TenantsController : ControllerBase
                 request.TenantName,
                 request.TenantId,
                 request.ClientId,
-                request.SecretReference,
+                request.ClientSecret,
                 request.IsActive,
                 cancellationToken);
 
@@ -64,7 +64,7 @@ public sealed class TenantsController : ControllerBase
                 request.TenantName,
                 request.TenantId,
                 request.ClientId,
-                request.SecretReference,
+                request.ClientSecret,
                 request.IsActive,
                 cancellationToken);
 

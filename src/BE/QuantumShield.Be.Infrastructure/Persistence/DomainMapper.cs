@@ -6,13 +6,15 @@ namespace QuantumShield.Be.Infrastructure.Persistence;
 internal static class DomainMapper
 {
     public static Tenant ToDomain(this TenantEntity entity)
-    {
-        var tenant = Tenant.Create(entity.TenantName, entity.TenantId, entity.ClientId, entity.SecretReference, entity.IsActive);
-        SetProperty(tenant, nameof(Tenant.Id), entity.Id);
-        SetProperty(tenant, nameof(Tenant.CreatedAtUtc), entity.CreatedAtUtc);
-        SetProperty(tenant, nameof(Tenant.UpdatedAtUtc), entity.UpdatedAtUtc);
-        return tenant;
-    }
+        => Tenant.Rehydrate(
+            entity.Id,
+            entity.TenantName,
+            entity.TenantId,
+            entity.ClientId,
+            entity.SecretReference,
+            entity.IsActive,
+            entity.CreatedAtUtc,
+            entity.UpdatedAtUtc);
 
     public static TenantEntity ToEntity(this Tenant domain)
         => new()

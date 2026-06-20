@@ -2,7 +2,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\QuantumShield.Be.Domain\QuantumShield.Be.Domain.csproj" />
-    <ProjectReference Include="..\QuantumShield.Be.Business\QuantumShield.Be.Business.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

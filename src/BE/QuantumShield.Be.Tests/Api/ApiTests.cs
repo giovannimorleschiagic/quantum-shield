@@ -23,13 +23,15 @@ public sealed class ApiTests
             "Contoso",
             Guid.NewGuid().ToString(),
             Guid.NewGuid().ToString(),
-            "secret-ref",
+            "plain-secret",
             true));
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
         var createdTenant = await response.Content.ReadFromJsonAsync<TenantResponse>();
         Assert.NotNull(createdTenant);
+        Assert.StartsWith("https://vault.example/secrets/", createdTenant.SecretReference, StringComparison.Ordinal);
+        Assert.DoesNotContain("plain-secret", createdTenant.SecretReference, StringComparison.Ordinal);
 
         var list = await client.GetFromJsonAsync<List<TenantResponse>>("/api/tenants");
 
@@ -145,6 +147,9 @@ public sealed class ApiTests
 
     private sealed class FakeCredentialProvider : ITenantCredentialProvider
     {
+        public Task<string> SaveClientSecretAsync(Guid tenantId, string clientSecret, CancellationToken cancellationToken)
+            => Task.FromResult($"https://vault.example/secrets/{tenantId:N}-client-secret");
+
         public Task<string> GetClientSecretAsync(Tenant tenant, CancellationToken cancellationToken)
             => Task.FromResult("secret");
     }

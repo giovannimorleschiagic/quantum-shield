@@ -6,11 +6,24 @@ namespace QuantumShield.Be.Infrastructure.Security;
 
 public sealed class KeyVaultTenantCredentialProvider : ITenantCredentialProvider
 {
+    private const string SecretNameSuffix = "client-secret";
     private readonly SecretClient _secretClient;
 
     public KeyVaultTenantCredentialProvider(SecretClient secretClient)
     {
         _secretClient = secretClient;
+    }
+
+    public async Task<string> SaveClientSecretAsync(Guid tenantId, string clientSecret, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(clientSecret))
+        {
+            throw new InvalidOperationException("Client secret is required.");
+        }
+
+        var secretName = BuildSecretName(tenantId);
+        var secret = await _secretClient.SetSecretAsync(secretName, clientSecret.Trim(), cancellationToken);
+        return secret.Value.Id?.ToString() ?? secret.Value.Name;
     }
 
     public async Task<string> GetClientSecretAsync(Tenant tenant, CancellationToken cancellationToken)
@@ -19,6 +32,9 @@ public sealed class KeyVaultTenantCredentialProvider : ITenantCredentialProvider
         var secret = await _secretClient.GetSecretAsync(secretName, cancellationToken: cancellationToken);
         return secret.Value.Value;
     }
+
+    public static string BuildSecretName(Guid tenantId)
+        => $"tenant-{tenantId:N}-{SecretNameSuffix}";
 
     public static string ExtractSecretName(string secretReference)
     {

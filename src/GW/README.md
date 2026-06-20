@@ -8,6 +8,7 @@ This folder contains a self-contained Terraform stack that provisions:
 - a Linux App Service Plan
 - a Linux Web App used as the backend target
 - a static-content Linux Web App hosted in the same App Service Plan
+- Azure Application Insights connected to both App Services
 - an Azure Key Vault
 - an Azure SQL Server and SQL Database
 - an Azure Storage Account with a private Blob container

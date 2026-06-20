@@ -7,6 +7,7 @@ locals {
   app_service_plan    = "asp-${var.prefix}"
   web_app_name        = substr(replace("app-${var.prefix}", "_", "-"), 0, 60)
   static_content_app_name    = substr(replace("static-${var.prefix}", "_", "-"), 0, 60)
+  app_insights_name   = substr(replace("appi-${var.prefix}", "_", "-"), 0, 60)
   key_vault_name      = substr(replace("kv-${var.prefix}-${random_string.global_suffix.result}", "_", "-"), 0, 24)
   sql_server_name     = substr(replace("sql-${var.prefix}-${random_string.global_suffix.result}", "_", "-"), 0, 63)
   storage_account_name = substr(
@@ -14,6 +15,8 @@ locals {
     0,
     24
   )
+  sql_connection_secret_name  = "SqlConnectionString"
+  blob_connection_secret_name = "BlobStorageConnectionString"
 }
 
 data "azurerm_client_config" "current" {}
@@ -64,6 +67,14 @@ resource "azurerm_service_plan" "this" {
   tags                = var.tags
 }
 
+resource "azurerm_application_insights" "this" {
+  name                = local.app_insights_name
+  location            = azurerm_resource_group.this.location
+  resource_group_name = azurerm_resource_group.this.name
+  application_type    = "web"
+  tags                = var.tags
+}
+
 resource "azurerm_linux_web_app" "backend" {
   name                = local.web_app_name
   location            = azurerm_resource_group.this.location
@@ -71,6 +82,10 @@ resource "azurerm_linux_web_app" "backend" {
   service_plan_id     = azurerm_service_plan.this.id
   https_only          = true
   tags                = var.tags
+
+  identity {
+    type = "SystemAssigned"
+  }
 
   site_config {
     always_on                         = true
@@ -90,7 +105,9 @@ resource "azurerm_linux_web_app" "backend" {
   }
 
   app_settings = {
-    WEBSITES_PORT = "80"
+    WEBSITES_PORT                       = "80"
+    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.this.connection_string
+    APPINSIGHTS_INSTRUMENTATIONKEY        = azurerm_application_insights.this.instrumentation_key
   }
 }
 
@@ -111,7 +128,9 @@ resource "azurerm_linux_web_app" "static_content" {
   }
 
   app_settings = {
-    WEBSITE_DEFAULT_DOCUMENT = "index.html"
+    WEBSITE_DEFAULT_DOCUMENT            = "index.html"
+    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.this.connection_string
+    APPINSIGHTS_INSTRUMENTATIONKEY        = azurerm_application_insights.this.instrumentation_key
   }
 }
 
@@ -126,6 +145,24 @@ resource "azurerm_key_vault" "this" {
   purge_protection_enabled      = var.key_vault_purge_protection_enabled
   public_network_access_enabled = true
   tags                          = var.tags
+}
+
+resource "azurerm_role_assignment" "backend_key_vault_secrets_officer" {
+  scope                = azurerm_key_vault.this.id
+  role_definition_name = "Key Vault Secrets Officer"
+  principal_id         = azurerm_linux_web_app.backend.identity[0].principal_id
+}
+
+resource "azurerm_role_assignment" "deployer_key_vault_secrets_officer" {
+  scope                = azurerm_key_vault.this.id
+  role_definition_name = "Key Vault Secrets Officer"
+  principal_id         = data.azurerm_client_config.current.object_id
+}
+
+resource "azurerm_role_assignment" "deployer_key_vault_secrets_user" {
+  scope                = azurerm_key_vault.this.id
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = data.azurerm_client_config.current.object_id
 }
 
 resource "azurerm_mssql_server" "this" {
@@ -174,6 +211,22 @@ resource "azurerm_storage_container" "blob" {
   name                  = var.blob_container_name
   storage_account_id    = azurerm_storage_account.this.id
   container_access_type = "private"
+}
+
+resource "azurerm_key_vault_secret" "sql_connection_string" {
+  name         = local.sql_connection_secret_name
+  key_vault_id = azurerm_key_vault.this.id
+  value        = "Server=tcp:${azurerm_mssql_server.this.fully_qualified_domain_name},1433;Initial Catalog=${azurerm_mssql_database.this.name};Persist Security Info=False;User ID=${var.sql_administrator_login};Password=${var.sql_administrator_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+
+  depends_on = [azurerm_role_assignment.deployer_key_vault_secrets_officer]
+}
+
+resource "azurerm_key_vault_secret" "blob_connection_string" {
+  name         = local.blob_connection_secret_name
+  key_vault_id = azurerm_key_vault.this.id
+  value        = azurerm_storage_account.this.primary_connection_string
+
+  depends_on = [azurerm_role_assignment.deployer_key_vault_secrets_officer]
 }
 
 resource "azurerm_application_gateway" "this" {

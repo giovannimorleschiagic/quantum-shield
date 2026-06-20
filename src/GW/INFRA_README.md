@@ -13,6 +13,7 @@ Terraform in this folder provisions the following Azure resources:
 - App Service Plan (Linux)
 - Linux Web App (backend)
 - Static-content Linux Web App (same App Service Plan)
+- Application Insights (connected to both App Services)
 - Key Vault (RBAC enabled)
 - Azure SQL Server + Azure SQL Database
 - Storage Account + private Blob container
@@ -80,6 +81,11 @@ Result: direct public access to the Web App endpoint is denied; requests are exp
 - Soft delete retention: 7 days
 - Purge protection controlled by variable
 - Public network access currently enabled
+- Backend Web App system-assigned managed identity has `Key Vault Secrets Officer` role on the vault scope (read/write secrets)
+- Infrastructure deployer app registration has `Key Vault Secrets User` role on the vault scope (read secrets)
+- Terraform creates these secrets in Key Vault:
+  - `SqlConnectionString`
+  - `BlobStorageConnectionString`
 
 ### Azure SQL
 
@@ -96,6 +102,12 @@ Result: direct public access to the Web App endpoint is denied; requests are exp
 - Minimum TLS 1.2
 - Nested public items disabled
 - Blob container access type: `private`
+
+### Application Insights
+
+- Application type: `web`
+- Shared telemetry endpoint for backend and static-content App Services
+- Connection string and instrumentation key injected via App Service app settings
 
 ## Terraform Inputs
 
@@ -131,6 +143,10 @@ Exposed outputs from `outputs.tf`:
 - `backend_web_app_hostname`
 - `static_content_app_name`
 - `static_content_app_hostname`
+- `application_insights_name`
+- `application_insights_connection_string`
+- `key_vault_sql_connection_secret_name`
+- `key_vault_blob_connection_secret_name`
 - `key_vault_name`
 - `key_vault_uri`
 - `sql_server_fqdn`

@@ -14,12 +14,12 @@ import {
   Typography,
 } from "@mui/material";
 import { evaluationRunsProvider } from "../../api/evaluationRuns/evaluationRunsProvider";
-import type { EvaluationRunResponse } from "../../api/evaluationRuns/models";
+import type { EvaluationRunSummaryResponse } from "../../api/evaluationRuns/models";
 import StatusBadge from "../../components/StatusBadge";
 
 export default function RunsPage() {
   const navigate = useNavigate();
-  const [runs, setRuns] = useState<EvaluationRunResponse[]>([]);
+  const [runs, setRuns] = useState<EvaluationRunSummaryResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,16 +46,13 @@ export default function RunsPage() {
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <strong>Template</strong>
+                  <strong>Run ID</strong>
                 </TableCell>
                 <TableCell>
                   <strong>Tenant ID</strong>
                 </TableCell>
                 <TableCell>
                   <strong>Stato</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Check</strong>
                 </TableCell>
                 <TableCell>
                   <strong>Avviato il</strong>
@@ -68,19 +65,18 @@ export default function RunsPage() {
             <TableBody>
               {runs.map((r) => (
                 <TableRow key={r.id} hover sx={{ cursor: "pointer" }} onClick={() => navigate(`/runs/${r.id}`)}>
-                  <TableCell>{r.templateIdentifier}</TableCell>
+                  <TableCell sx={{ fontFamily: "monospace", fontSize: 12 }}>{r.id}</TableCell>
                   <TableCell sx={{ fontFamily: "monospace", fontSize: 12 }}>{r.tenantId}</TableCell>
                   <TableCell>
                     <StatusBadge status={r.status} />
                   </TableCell>
-                  <TableCell>{r.status === "Completed" ? `${r.passedChecks}/${r.totalChecks} pass` : "—"}</TableCell>
                   <TableCell>{new Date(r.startedAtUtc).toLocaleString("it-IT")}</TableCell>
                   <TableCell>{r.completedAtUtc ? new Date(r.completedAtUtc).toLocaleString("it-IT") : "—"}</TableCell>
                 </TableRow>
               ))}
               {runs.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} align="center" sx={{ color: "text.secondary", py: 4 }}>
+                  <TableCell colSpan={5} align="center" sx={{ color: "text.secondary", py: 4 }}>
                     Nessun run trovato.
                   </TableCell>
                 </TableRow>

@@ -15,7 +15,6 @@ import {
   DialogTitle,
   Divider,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
@@ -23,7 +22,7 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { tenantsProvider } from "../../api/tenants/tenantsProvider";
 import { evaluationRunsProvider } from "../../api/evaluationRuns/evaluationRunsProvider";
 import type { TenantResponse } from "../../api/tenants/models";
-import type { EvaluationRunResponse } from "../../api/evaluationRuns/models";
+import type { EvaluationRunSummaryResponse } from "../../api/evaluationRuns/models";
 import StatusBadge from "../../components/StatusBadge";
 
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
@@ -41,11 +40,10 @@ export default function TenantDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [tenant, setTenant] = useState<TenantResponse | null>(null);
-  const [runs, setRuns] = useState<EvaluationRunResponse[]>([]);
+  const [runs, setRuns] = useState<EvaluationRunSummaryResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [templateId, setTemplateId] = useState("");
   const [launching, setLaunching] = useState(false);
 
   useEffect(() => {
@@ -63,10 +61,7 @@ export default function TenantDetailPage() {
     if (!id) return;
     setLaunching(true);
     try {
-      const run = await evaluationRunsProvider.trigger({
-        tenantId: id,
-        templateIdentifier: templateId || null,
-      });
+      const run = await evaluationRunsProvider.trigger({ tenantId: id });
       navigate(`/runs/${run.id}`);
     } catch {
       setError("Errore durante l'avvio dell'assessment.");
@@ -130,21 +125,14 @@ export default function TenantDetailPage() {
                 <CardContent sx={{ py: 1.5, "&:last-child": { pb: 1.5 } }}>
                   <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <Box>
-                      <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                        {run.templateIdentifier}
+                      <Typography variant="body2" sx={{ fontWeight: "bold", fontFamily: "monospace", fontSize: 12 }}>
+                        {run.id}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
                         {new Date(run.startedAtUtc).toLocaleString("it-IT")}
                       </Typography>
                     </Box>
-                    <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-                      {run.status === "Completed" && (
-                        <Typography variant="body2" color="text.secondary">
-                          {run.passedChecks}/{run.totalChecks} pass
-                        </Typography>
-                      )}
-                      <StatusBadge status={run.status} />
-                    </Box>
+                    <StatusBadge status={run.status} />
                   </Box>
                 </CardContent>
               </CardActionArea>
@@ -153,17 +141,12 @@ export default function TenantDetailPage() {
         </Stack>
       )}
 
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth maxWidth="sm">
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="xs">
         <DialogTitle>Lancia assessment</DialogTitle>
         <DialogContent>
-          <TextField
-            label="Template identifier (opzionale)"
-            fullWidth
-            sx={{ mt: 1 }}
-            value={templateId}
-            onChange={(e) => setTemplateId(e.target.value)}
-            placeholder="Lascia vuoto per il template predefinito"
-          />
+          <Typography variant="body2">
+            Avvia un nuovo assessment per il tenant <strong>{tenant?.tenantName}</strong>.
+          </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDialogOpen(false)}>Annulla</Button>

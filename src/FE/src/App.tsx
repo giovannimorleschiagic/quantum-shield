@@ -8,8 +8,6 @@ function App() {
   const { instance, accounts, inProgress } = useMsal();
   const [resultMessage, setResultMessage] = useState("");
 
-
-  
   const isBusy = inProgress !== InteractionStatus.None;
   const activeAccount = accounts[0];
 

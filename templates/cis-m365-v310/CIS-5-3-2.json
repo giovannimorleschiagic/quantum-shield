@@ -1,0 +1,77 @@
+{
+  "license_requirement": {
+    "license_supported": true,
+    "minimum_license": "Microsoft Entra ID P2 o Microsoft Entra ID Governance",
+    "entra_id_tier": "P2",
+    "license_gate_message": "LICENZA OBBLIGATORIA: Access Reviews richiedono Microsoft Entra ID P2 o Microsoft Entra ID Governance. Senza questa licenza il controllo risulta N/A."
+  },
+  "section": "5.3 - Privileged Access",
+  "title": "Ensure 'Access reviews' for Guest Users are configured",
+  "complexity_notes": "Richiede 4 sub-check: (C1) esiste un Access Review per guest users, (C2) è ricorrente con frequenza adeguata (almeno quarterly), (C3) il reviewer è configurato (non auto-review), (C4) l'azione in caso di mancata risposta è configurata su 'deny'. Richiede Entra ID P2.",
+  "remediation": {
+    "description": "Entra Admin Center > Identity Governance > Access reviews > Nuova verifica: Scope=Guest users, Revisori=Manager o gruppo specifico, Ricorrenza=Mensile/Trimestrale, Azione automatica=Rimuovi accesso se non approvato.",
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/id-governance/access-reviews-overview"
+  },
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "control_id": "5.3.2",
+  "checks": [
+    {
+      "status": "not_run",
+      "check_id": "C1",
+      "license_required": "Microsoft Entra ID P2",
+      "description": "Verificare che esista almeno un Access Review attivo per guest users",
+      "endpoint": "GET /identityGovernance/accessReviews/definitions?$filter=contains(scope/query,'/guests') or contains(scope/query,'userType eq''Guest''')",
+      "result": null,
+      "expected_result": "Almeno un Access Review definition attivo per guest users",
+      "graph_permissions": [
+        "AccessReview.Read.All"
+      ],
+      "method": "graph_api"
+    },
+    {
+      "status": "not_run",
+      "check_id": "C2",
+      "license_required": "Microsoft Entra ID P2",
+      "description": "Verificare che l'Access Review sia ricorrente (almeno quarterly)",
+      "endpoint": "GET /identityGovernance/accessReviews/definitions/{id}",
+      "result": null,
+      "expected_result": "recurrence.pattern.type = 'weekly' o 'absoluteMonthly' con interval <= 3",
+      "graph_permissions": [
+        "AccessReview.Read.All"
+      ],
+      "method": "graph_api"
+    },
+    {
+      "status": "not_run",
+      "check_id": "C3",
+      "license_required": "Microsoft Entra ID P2",
+      "description": "Verificare che il reviewer non sia il guest stesso (self-review)",
+      "endpoint": "GET /identityGovernance/accessReviews/definitions/{id}?$select=reviewers",
+      "result": null,
+      "expected_result": "reviewers non contiene solo 'self' come tipo",
+      "graph_permissions": [
+        "AccessReview.Read.All"
+      ],
+      "method": "graph_api"
+    },
+    {
+      "status": "not_run",
+      "check_id": "C4",
+      "license_required": "Microsoft Entra ID P2",
+      "description": "Verificare che l'azione in caso di mancata risposta del reviewer sia 'Deny'",
+      "endpoint": "GET /identityGovernance/accessReviews/definitions/{id}?$select=settings",
+      "result": null,
+      "expected_result": "settings.defaultDecision = 'Deny' e settings.autoApplyDecisionsEnabled = true",
+      "graph_permissions": [
+        "AccessReview.Read.All"
+      ],
+      "method": "graph_api"
+    }
+  ],
+  "version": "3.1.0",
+  "check_complexity": "complex",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/id-governance/access-reviews-overview",
+    "https://learn.microsoft.com/en-us/entra/id-governance/create-access-review"
+  ]
+}

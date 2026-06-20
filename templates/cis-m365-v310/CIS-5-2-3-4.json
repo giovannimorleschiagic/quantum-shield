@@ -1,0 +1,37 @@
+{
+  "complexity_notes": "Un solo check: report authentication methods registration - verificare che tutti i member users (non guest) abbiano almeno un metodo MFA registrato (isMfaCapable = true).",
+  "title": "Ensure all member users are 'MFA capable'",
+  "version": "3.1.0",
+  "license_requirement": {
+    "entra_id_tier": "Free",
+    "license_gate_message": null,
+    "minimum_license": "Microsoft Entra ID (qualsiasi piano)",
+    "license_supported": true
+  },
+  "section": "5.2 - Authentication Methods / MFA",
+  "remediation": {
+    "description": "Identificare gli utenti non MFA-capable e avviarli al processo di registrazione MFA (Entra Admin Center > Utenti > Metodi di autenticazione > Richiedere la registrazione). Considerare una CA policy con 'Require MFA registration'.",
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/identity/authentication/howto-registration-mfa-sspr-combined"
+  },
+  "control_id": "5.2.3.4",
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/identity/authentication/howto-registration-mfa-sspr-combined",
+    "https://learn.microsoft.com/en-us/entra/identity/authentication/concept-mfa-authapp"
+  ],
+  "check_complexity": "simple",
+  "checks": [
+    {
+      "expected_result": "Nessun member user con isMfaCapable = false",
+      "method": "graph_api",
+      "description": "Verificare che tutti i member users abbiano isMfaCapable = true",
+      "check_id": "C1",
+      "graph_permissions": [
+        "Reports.Read.All"
+      ],
+      "result": null,
+      "status": "not_run",
+      "endpoint": "GET /reports/authenticationMethods/userRegistrationDetails?$filter=isMfaCapable eq false and userType eq 'member'&$select=userPrincipalName,isMfaCapable,isMfaRegistered,defaultMfaMethod"
+    }
+  ]
+}

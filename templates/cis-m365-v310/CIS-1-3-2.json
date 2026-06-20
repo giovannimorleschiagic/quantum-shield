@@ -1,0 +1,51 @@
+{
+  "check_complexity": "complex",
+  "license_requirement": {
+    "license_gate_message": "Richiede Microsoft Entra ID P1 o P2 per le policy Conditional Access. Senza questa licenza il controllo non è applicabile tramite CA.",
+    "license_supported": true,
+    "entra_id_tier": "P1",
+    "minimum_license": "Microsoft Entra ID P1 o P2"
+  },
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "control_id": "1.3.2",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/identity/conditional-access/howto-policy-session-sign-in-frequency",
+    "https://learn.microsoft.com/en-us/entra/identity/conditional-access/concept-session-lifetime"
+  ],
+  "checks": [
+    {
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "description": "Verifica esistenza di policy CA con Sign-in frequency <= 180 minuti (3 ore)",
+      "result": null,
+      "method": "graph_api",
+      "status": "not_run",
+      "expected_result": "Policy CA abilitata con sessionControls.signInFrequency.value <= 3 e type = 'hours'",
+      "license_required": "Microsoft Entra ID P1",
+      "check_id": "C1",
+      "endpoint": "GET /identity/conditionalAccess/policies"
+    },
+    {
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "description": "La policy si applica ai dispositivi non gestiti (unmanaged/compliant=false)",
+      "result": null,
+      "method": "graph_api",
+      "status": "not_run",
+      "expected_result": "conditions.devices.deviceFilter esclude solo dispositivi gestiti/compliant",
+      "license_required": "Microsoft Entra ID P1",
+      "check_id": "C2",
+      "endpoint": "GET /identity/conditionalAccess/policies/{id}"
+    }
+  ],
+  "section": "1 - Microsoft 365 Administration",
+  "title": "Ensure 'Idle session timeout' is set to '3 hours (or less)' for unmanaged devices",
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/identity/conditional-access/howto-policy-session-sign-in-frequency",
+    "description": "Creare o modificare una policy Conditional Access: Utenti=Tutti, Cloud apps=Tutti, Condizioni=Dispositivi non gestiti, Sessione=Sign-in frequency 3 ore, Persistent browser session=Never persistent."
+  },
+  "complexity_notes": "Richiede 2 sub-check tramite Conditional Access: (C1) verifica esistenza policy CA con Sign-in frequency <= 3 ore, (C2) verifica che la policy target unmanaged devices (filtro su device compliance o join state). Richiede Entra ID P1.",
+  "version": "3.1.0"
+}

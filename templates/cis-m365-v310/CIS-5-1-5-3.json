@@ -1,0 +1,36 @@
+{
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "complexity_notes": "Un solo check: verifica che il workflow di approvazione admin per le richieste di consenso app sia abilitato.",
+  "title": "Ensure the admin consent workflow is enabled",
+  "check_complexity": "simple",
+  "version": "3.1.0",
+  "license_requirement": {
+    "license_gate_message": null,
+    "entra_id_tier": "Free",
+    "minimum_license": "Microsoft Entra ID (qualsiasi piano)",
+    "license_supported": true
+  },
+  "section": "5.1 - Microsoft Entra ID",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-admin-consent-workflow"
+  ],
+  "checks": [
+    {
+      "result": null,
+      "expected_result": "isEnabled = true, reviewers configurati",
+      "endpoint": "GET /policies/adminConsentRequestPolicy",
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "check_id": "C1",
+      "description": "Verificare che il workflow di consenso amministratore sia abilitato",
+      "status": "not_run",
+      "method": "graph_api"
+    }
+  ],
+  "remediation": {
+    "description": "Entra Admin Center > App aziendali > Consenso e autorizzazioni > Admin consent settings: abilitare il workflow e configurare i reviewer.",
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-admin-consent-workflow"
+  },
+  "control_id": "5.1.5.3"
+}

@@ -1,0 +1,37 @@
+{
+  "complexity_notes": "Check procedurale/manuale: verificare che esista un processo documentato di revisione settimanale del report SSPR. Il report è accessibile tramite Graph API.",
+  "title": "Ensure the self-service password reset activity report is reviewed at least weekly",
+  "version": "3.1.0",
+  "license_requirement": {
+    "entra_id_tier": "P1",
+    "license_gate_message": "LICENZA OBBLIGATORIA: Il report di attività SSPR richiede Microsoft Entra ID P1 o P2.",
+    "minimum_license": "Microsoft Entra ID P1 o P2",
+    "license_supported": true
+  },
+  "section": "5.2 - Authentication Methods / MFA",
+  "remediation": {
+    "description": "Entra Admin Center > Protezione > Reimpostazione password self-service > Attività: esaminare settimanalmente. Configurare alert via Microsoft Sentinel per anomalie nelle attività SSPR.",
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/identity/authentication/howto-sspr-reporting"
+  },
+  "control_id": "5.2.4.2",
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/identity/authentication/howto-sspr-reporting"
+  ],
+  "check_complexity": "simple",
+  "checks": [
+    {
+      "status": "not_run",
+      "method": "graph_api",
+      "graph_permissions": [
+        "AuditLog.Read.All"
+      ],
+      "description": "Verificare accesso al report SSPR e revisione settimanale documentata",
+      "expected_result": "Report accessibile e consultato almeno settimanalmente (verifica procedurale)",
+      "endpoint": "GET /auditLogs/directoryAudits?$filter=loggedByService eq 'Self-service Password Management'&$orderby=activityDateTime desc&$top=50",
+      "result": null,
+      "check_id": "C1",
+      "license_required": "Microsoft Entra ID P1"
+    }
+  ]
+}

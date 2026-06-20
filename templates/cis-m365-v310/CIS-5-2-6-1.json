@@ -1,0 +1,38 @@
+{
+  "complexity_notes": "Check procedurale/manuale: verificare che esista un processo documentato di revisione settimanale dei risky sign-ins. La feature richiede Entra ID P2. Senza P2 il report non è disponibile.",
+  "title": "Ensure the Azure AD 'Risky sign-ins' report is reviewed at least weekly",
+  "version": "3.1.0",
+  "license_requirement": {
+    "entra_id_tier": "P2",
+    "license_gate_message": "LICENZA OBBLIGATORIA: Il report 'Risky sign-ins' (Identity Protection) richiede Microsoft Entra ID P2 o Microsoft Entra ID Governance. Senza questa licenza il report non è disponibile e il controllo risulta N/A.",
+    "minimum_license": "Microsoft Entra ID P2 o Microsoft Entra ID Governance",
+    "license_supported": true
+  },
+  "section": "5.2 - Authentication Methods / MFA",
+  "remediation": {
+    "description": "Entra Admin Center > Protezione > Identity Protection > Report accessi a rischio: esaminare settimanalmente. Configurare policy di rischio per blocco automatico o MFA challenge sui sign-in ad alto rischio.",
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/id-protection/howto-identity-protection-investigate-risk"
+  },
+  "control_id": "5.2.6.1",
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/id-protection/howto-identity-protection-investigate-risk",
+    "https://learn.microsoft.com/en-us/entra/id-protection/overview-identity-protection"
+  ],
+  "check_complexity": "simple",
+  "checks": [
+    {
+      "status": "not_run",
+      "method": "graph_api",
+      "graph_permissions": [
+        "IdentityRiskyUser.Read.All"
+      ],
+      "description": "Verificare accesso al report Risky sign-ins e revisione settimanale documentata",
+      "expected_result": "Report accessibile (licenza P2 confermata) e consultato almeno settimanalmente",
+      "endpoint": "GET /identityProtection/riskyUsers?$top=10&$orderby=riskLastUpdatedDateTime desc",
+      "result": null,
+      "check_id": "C1",
+      "license_required": "Microsoft Entra ID P2"
+    }
+  ]
+}

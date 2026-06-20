@@ -1,0 +1,36 @@
+{
+  "checks": [
+    {
+      "expected_result": "LinkedIn integration = Disabled per tutti gli utenti",
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "description": "Verificare che LinkedIn account connections siano disabilitati",
+      "status": "not_run",
+      "result": null,
+      "method": "graph_api",
+      "endpoint": "GET /policies/authorizationPolicy - oppure verificare tramite Entra Admin Center > Impostazioni utente > LinkedIn account connections",
+      "check_id": "C1"
+    }
+  ],
+  "title": "Ensure 'LinkedIn account connections' is disabled",
+  "complexity_notes": "Un solo check: impostazione nella User Settings di Entra ID.",
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/identity/users/linkedin-integration",
+    "description": "Entra Admin Center > Impostazioni utente > Connessioni account LinkedIn = No (per tutti)."
+  },
+  "section": "5.1 - Microsoft Entra ID",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/identity/users/linkedin-integration"
+  ],
+  "control_id": "5.1.2.6",
+  "license_requirement": {
+    "license_gate_message": null,
+    "minimum_license": "Microsoft Entra ID (qualsiasi piano)",
+    "license_supported": true,
+    "entra_id_tier": "Free"
+  },
+  "version": "3.1.0",
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "check_complexity": "simple"
+}

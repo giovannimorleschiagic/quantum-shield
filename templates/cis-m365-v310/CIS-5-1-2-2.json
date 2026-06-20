@@ -1,0 +1,36 @@
+{
+  "checks": [
+    {
+      "expected_result": "permissionGrantPolicyIdsAssignedToDefaultUserRole = [] (vuoto, nessun consenso)",
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "description": "Verificare che il consenso utente alle app di terze parti sia disabilitato",
+      "status": "not_run",
+      "result": null,
+      "method": "graph_api",
+      "endpoint": "GET /policies/authorizationPolicy?$select=permissionGrantPolicyIdsAssignedToDefaultUserRole",
+      "check_id": "C1"
+    }
+  ],
+  "title": "Ensure third party integrated applications are not allowed",
+  "complexity_notes": "Un solo check: impostazione 'Users can consent to apps accessing company data' deve essere impostata su 'Do not allow user consent'.",
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-user-consent",
+    "description": "Entra Admin Center > App aziendali > Impostazioni utente > Consenso utente ad applicazioni: 'Non consentire il consenso utente'. Configurare il workflow di approvazione amministratore."
+  },
+  "section": "5.1 - Microsoft Entra ID",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-user-consent"
+  ],
+  "control_id": "5.1.2.2",
+  "license_requirement": {
+    "license_gate_message": null,
+    "minimum_license": "Microsoft Entra ID (qualsiasi piano)",
+    "license_supported": true,
+    "entra_id_tier": "Free"
+  },
+  "version": "3.1.0",
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "check_complexity": "simple"
+}

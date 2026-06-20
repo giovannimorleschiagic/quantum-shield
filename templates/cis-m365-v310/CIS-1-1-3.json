@@ -1,0 +1,36 @@
+{
+  "license_requirement": {
+    "license_supported": true,
+    "minimum_license": "Microsoft 365 (qualsiasi piano)",
+    "entra_id_tier": "Free",
+    "license_gate_message": null
+  },
+  "section": "1 - Account / Authentication",
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "checks": [
+    {
+      "graph_permissions": [
+        "RoleManagement.Read.Directory"
+      ],
+      "method": "graph_api",
+      "endpoint": "GET /directoryRoles/roleTemplateId=62e90394-69f5-4237-9190-012177145e10/members/$count",
+      "result": null,
+      "check_id": "C1",
+      "expected_result": "Tra 2 e 4 Global Admin",
+      "description": "Contare il numero di utenti con ruolo Global Administrator",
+      "status": "not_run"
+    }
+  ],
+  "title": "Ensure that between two and four global admins are designated",
+  "version": "3.1.0",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/best-practices"
+  ],
+  "control_id": "1.1.3",
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/best-practices",
+    "description": "Mantenere tra 2 e 4 Global Administrator. Usare ruoli con privilegi minimi per attività specifiche."
+  },
+  "complexity_notes": "Un solo check: contare i Global Admin attivi. Il risultato deve essere >= 2 e <= 4.",
+  "check_complexity": "simple"
+}

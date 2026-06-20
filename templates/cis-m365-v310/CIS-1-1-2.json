@@ -1,0 +1,70 @@
+{
+  "license_requirement": {
+    "license_supported": true,
+    "minimum_license": "Microsoft 365 (qualsiasi piano)",
+    "entra_id_tier": "Free",
+    "license_gate_message": null
+  },
+  "section": "1 - Account / Authentication",
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "checks": [
+    {
+      "graph_permissions": [
+        "RoleManagement.Read.Directory"
+      ],
+      "method": "graph_api",
+      "endpoint": "GET /directoryRoles/roleTemplateId=62e90394-69f5-4237-9190-012177145e10/members",
+      "result": null,
+      "check_id": "C1",
+      "expected_result": ">=2 account Global Admin cloud-only senza licenza product",
+      "description": "Esistono almeno 2 account di accesso di emergenza",
+      "status": "not_run"
+    },
+    {
+      "graph_permissions": [
+        "User.Read.All"
+      ],
+      "method": "graph_api",
+      "endpoint": "GET /users/{id}?$select=onPremisesSyncEnabled,assignedLicenses",
+      "result": null,
+      "check_id": "C2",
+      "expected_result": "onPremisesSyncEnabled = null, assignedLicenses = []",
+      "description": "Gli account break-glass sono cloud-only e non sincronizzati",
+      "status": "not_run"
+    },
+    {
+      "graph_permissions": [
+        "Policy.Read.All"
+      ],
+      "method": "graph_api",
+      "endpoint": "GET /identity/conditionalAccess/policies",
+      "result": null,
+      "check_id": "C3",
+      "expected_result": "I break-glass sono in excludedUsers per ogni policy CA con grant MFA",
+      "description": "Gli account break-glass sono ESCLUSI da tutte le policy CA che richiedono MFA",
+      "status": "not_run"
+    },
+    {
+      "graph_permissions": [],
+      "method": "manual",
+      "endpoint": null,
+      "result": null,
+      "check_id": "C4",
+      "expected_result": "Alert attivo in Microsoft Sentinel o Microsoft 365 Defender per accessi break-glass",
+      "description": "Esiste un alert di monitoraggio su ogni sign-in degli account break-glass",
+      "status": "not_run"
+    }
+  ],
+  "title": "Ensure two emergency access accounts have been defined",
+  "version": "3.1.0",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/security-emergency-access"
+  ],
+  "control_id": "1.1.2",
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/security-emergency-access",
+    "description": "Creare 2 account break-glass con password lunga e complessa (26+ char), autenticare con metodo diverso da MFA policy principale, monitorarli con alert."
+  },
+  "complexity_notes": "Richiede 4 sub-check: (C1) esistono >=2 account break-glass, (C2) hanno ruolo Global Administrator, (C3) NON sono coperti da policy CA che impone MFA (altrimenti inutilizzabili in emergenza), (C4) è attivo un alert/monitor su ogni accesso di questi account",
+  "check_complexity": "complex"
+}

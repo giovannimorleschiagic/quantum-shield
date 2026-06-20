@@ -85,6 +85,8 @@ POST /api/evaluations/runs  [Bearer token richiesto]
 
 > I risultati dettagliati non sono in SQL. In SQL c'è solo `ResultBlobName`. Il documento completo vive su Azure Blob Storage.
 
+> I check con `IsSupportedForB2C = false` vengono marcati `NotApplicable` automaticamente quando `Tenant.IsB2C = true`, senza eseguire la chiamata Graph.
+
 ## Infrastruttura Azure
 
 Vedere [`doc/architettura.drawio.png`](architettura.drawio.png) per il diagramma completo.

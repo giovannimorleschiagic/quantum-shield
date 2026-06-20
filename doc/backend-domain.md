@@ -13,13 +13,14 @@ Rappresenta un tenant Azure AD monitorato.
 | `ClientId` | `string` (GUID) | App registration, validato come GUID |
 | `SecretReference` | `string` | URI versioned del secret in Key Vault (non il secret in chiaro) |
 | `IsActive` | `bool` | Default `true` |
+| `IsB2C` | `bool` | Default `false` — se `true`, i check non supportati su B2C vengono marcati `NotApplicable` invece di essere eseguiti |
 | `CreatedAtUtc` | `DateTimeOffset` | Impostato alla creazione |
 | `UpdatedAtUtc` | `DateTimeOffset` | Aggiornato ad ogni `Update()` |
 
 Factory methods:
-- **`Tenant.Create(tenantName, tenantId, clientId, secretReference, isActive)`** — crea con `Guid.NewGuid()`
-- **`Tenant.Create(id, ...)`** — overload con ID esplicito
-- **`Tenant.Rehydrate(...)`** — ricostituisce da persistence (con `createdAtUtc`/`updatedAtUtc` esistenti)
+- **`Tenant.Create(tenantName, tenantId, clientId, secretReference, isActive, isB2C)`**
+- **`Tenant.Create(id, tenantName, ...)`** — overload con ID esplicito
+- **`Tenant.Rehydrate(id, ..., isB2C, createdAtUtc, updatedAtUtc)`** — ricostituisce da persistence
 
 ---
 
@@ -96,6 +97,7 @@ Definizione di un singolo check all'interno di un template.
 | `Endpoint` | URL Graph API (nullable per metodi non automatici) |
 | `GraphPermissions` | Lista di permessi Application richiesti |
 | `ExpectedResult` | Valore atteso della verifica |
+| `IsSupportedForB2C` | Default `true` — se `false`, il check è marcato `NotApplicable` per i tenant B2C |
 | `IsAutomatic` | `true` se `Method == "graph_api"` |
 
 ---

@@ -30,6 +30,7 @@ La cartella `templates/cis-m365-v310/` contiene **41 template JSON** che descriv
       "endpoint": "GET /endpoint?$select=field",
       "graph_permissions": ["Permission.Read.All"],
       "expected_result": "Valore atteso",
+      "b2c_supported": true,
       "status": "not_run | pass | fail",
       "result": null
     }
@@ -105,7 +106,7 @@ I seguenti permessi sono aggregati da tutti i template:
 - **`simple`** — un singolo `checks[]` con un unico sub-check
 - **`complex`** — più sub-check (`C1`, `C2`, `C3`, …) che devono passare tutti per validare il controllo
 
-Controlli complessi identificati: `1.1.1`, `5.3.1`, `5.3.2`, `5.3.3` (tra gli altri).
+Il campo `b2c_supported` (bool) per ogni check indica se il controllo è applicabile ai tenant Azure AD B2C. Se `false` e il tenant è B2C, il check viene marcato `NotApplicable` senza eseguire la chiamata Graph.
 
 ---
 

@@ -95,7 +95,10 @@ Tutte le sezioni sono obbligatorie; mancanze causano errore all'avvio (`Validate
 Il contesto EF si chiama **`ZeroTrustDbContext`**.
 Tabelle: `Tenants`, `EvaluationRuns`.
 
-> ⚠️ La tabella `EvaluationResults` è stata **rimossa** con la migration `CatalogEvaluationRunRefactor`. I risultati dettagliati sono ora serializzati come JSON in un **blob Azure Storage** (`EvaluationResultContainerName`). In SQL viene salvato solo il `ResultBlobName` (nome del blob).
+Migrations applicate:
+- `InitialCreate` — schema iniziale
+- `CatalogEvaluationRunRefactor` — rimozione tabella `EvaluationResults`, aggiunta `ResultBlobName`
+- `AddTenantB2CFlag` — aggiunta colonna `IsB2C` (bool, default `false`) alla tabella `Tenants`
 
 ## Registrazione servizi
 

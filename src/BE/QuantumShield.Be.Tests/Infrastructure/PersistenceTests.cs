@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using QuantumShield.Be.Domain.Enums;
 using QuantumShield.Be.Domain.Models;
 using QuantumShield.Be.Infrastructure.Persistence;
 using QuantumShield.Be.Infrastructure.Persistence.Repositories;
@@ -19,6 +20,23 @@ public sealed class PersistenceTests
 
         Assert.NotNull(loaded);
         Assert.Equal("Contoso", loaded.TenantName);
+    }
+
+    [Fact]
+    public async Task EvaluationRunRepository_ShouldPersistBlobReference()
+    {
+        await using var dbContext = CreateDbContext();
+        var repository = new EvaluationRunRepository(dbContext);
+        var run = EvaluationRun.CreatePending(Guid.NewGuid());
+        run.MarkInProgress();
+        run.Complete("tenant-a/evaluation-a.json");
+
+        await repository.AddAsync(run, CancellationToken.None);
+        var loaded = await repository.GetByIdAsync(run.Id, CancellationToken.None);
+
+        Assert.NotNull(loaded);
+        Assert.Equal("tenant-a/evaluation-a.json", loaded.ResultBlobName);
+        Assert.Equal(EvaluationRunStatus.Completed, loaded.Status);
     }
 
     private static ZeroTrustDbContext CreateDbContext()

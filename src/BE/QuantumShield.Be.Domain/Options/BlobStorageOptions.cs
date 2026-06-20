@@ -10,8 +10,11 @@ public sealed class BlobStorageOptions
     public string ConnectionString { get; init; } = string.Empty;
 
     [Required]
-    public string ContainerName { get; init; } = string.Empty;
+    public string TemplateContainerName { get; init; } = string.Empty;
 
     [Required]
     public string DefaultTemplateBlobName { get; init; } = string.Empty;
+
+    [Required]
+    public string EvaluationResultContainerName { get; init; } = string.Empty;
 }

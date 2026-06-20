@@ -6,22 +6,15 @@ namespace QuantumShield.Be.Tests.Domain;
 public sealed class EvaluationRunTests
 {
     [Fact]
-    public void Complete_ShouldSetStatusCountsAndTimestamp()
+    public void Complete_ShouldSetStatusBlobAndTimestamp()
     {
-        var run = EvaluationRun.CreatePending(Guid.NewGuid(), "template-a", "v1");
+        var run = EvaluationRun.CreatePending(Guid.NewGuid());
         run.MarkInProgress();
 
-        run.Complete([
-            new EvaluationResult("rule-1", "Rule 1", EvaluationCheckStatus.Passed, EvaluationSeverity.Low, "enabled", "enabled", null),
-            new EvaluationResult("rule-2", "Rule 2", EvaluationCheckStatus.Failed, EvaluationSeverity.High, "enabled", "disabled", null)
-        ]);
+        run.Complete("tenant-a/run-a.json");
 
         Assert.Equal(EvaluationRunStatus.Completed, run.Status);
-        Assert.Equal(2, run.TotalChecks);
-        Assert.Equal(1, run.PassedChecks);
-        Assert.Equal(1, run.FailedChecks);
+        Assert.Equal("tenant-a/run-a.json", run.ResultBlobName);
         Assert.NotNull(run.CompletedAtUtc);
     }
-    
-    
 }

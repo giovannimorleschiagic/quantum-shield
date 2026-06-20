@@ -31,7 +31,7 @@ internal static class DomainMapper
 
     public static EvaluationRun ToDomain(this EvaluationRunEntity entity)
     {
-        var run = EvaluationRun.CreatePending(entity.TenantId, entity.TemplateIdentifier, entity.TemplateVersion);
+        var run = EvaluationRun.CreatePending(entity.TenantId);
         SetProperty(run, nameof(EvaluationRun.Id), entity.Id);
         SetProperty(run, nameof(EvaluationRun.StartedAtUtc), entity.StartedAtUtc);
 
@@ -43,14 +43,14 @@ internal static class DomainMapper
         if (entity.Status == Domain.Enums.EvaluationRunStatus.Completed)
         {
             run.MarkInProgress();
-            run.Complete(entity.Results.Select(static result => result.ToDomain()));
+            run.Complete(entity.ResultBlobName ?? string.Empty);
             SetProperty(run, nameof(EvaluationRun.CompletedAtUtc), entity.CompletedAtUtc);
         }
 
         if (entity.Status == Domain.Enums.EvaluationRunStatus.Failed)
         {
             run.MarkInProgress();
-            run.Fail(entity.ErrorMessage ?? "The evaluation run failed.");
+            run.Fail();
             SetProperty(run, nameof(EvaluationRun.CompletedAtUtc), entity.CompletedAtUtc);
         }
 
@@ -63,44 +63,9 @@ internal static class DomainMapper
             Id = domain.Id,
             TenantId = domain.TenantId,
             Status = domain.Status,
-            TemplateIdentifier = domain.TemplateIdentifier,
-            TemplateVersion = domain.TemplateVersion,
-            TotalChecks = domain.TotalChecks,
-            PassedChecks = domain.PassedChecks,
-            FailedChecks = domain.FailedChecks,
-            NotApplicableChecks = domain.NotApplicableChecks,
-            ErrorMessage = domain.ErrorMessage,
+            ResultBlobName = domain.ResultBlobName,
             StartedAtUtc = domain.StartedAtUtc,
-            CompletedAtUtc = domain.CompletedAtUtc,
-            Results = domain.Results.Select(static result => result.ToEntity()).ToList()
-        };
-
-    public static EvaluationResult ToDomain(this EvaluationResultEntity entity)
-    {
-        var result = new EvaluationResult(
-            entity.RuleKey,
-            entity.DisplayName,
-            entity.Status,
-            entity.Severity,
-            entity.ExpectedValue,
-            entity.ActualValue,
-            entity.Notes);
-
-        SetProperty(result, nameof(EvaluationResult.Id), entity.Id);
-        return result;
-    }
-
-    public static EvaluationResultEntity ToEntity(this EvaluationResult domain)
-        => new()
-        {
-            Id = domain.Id,
-            RuleKey = domain.RuleKey,
-            DisplayName = domain.DisplayName,
-            Status = domain.Status,
-            Severity = domain.Severity,
-            ExpectedValue = domain.ExpectedValue,
-            ActualValue = domain.ActualValue,
-            Notes = domain.Notes
+            CompletedAtUtc = domain.CompletedAtUtc
         };
 
     private static void SetProperty<T>(T target, string propertyName, object? value)

@@ -1,9 +1,13 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Security.Claims;
+using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using QuantumShield.Be.Api.Contracts;
 using QuantumShield.Be.Domain.Enums;
 using QuantumShield.Be.Domain.Interfaces;
@@ -18,6 +22,7 @@ public sealed class ApiTests
     {
         await using var factory = new TestApplicationFactory();
         using var client = factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(TestAuthHandler.SchemeName);
 
         var response = await client.PostAsJsonAsync("/api/tenants", new CreateTenantRequest(
             "Contoso",
@@ -47,14 +52,20 @@ public sealed class ApiTests
         factory.TenantRepository.Seed(tenant);
 
         using var client = factory.CreateClient();
-        var response = await client.PostAsJsonAsync("/api/evaluations/runs", new TriggerEvaluationRunRequest(tenant.Id, "template-a"));
+        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(TestAuthHandler.SchemeName);
+        var response = await client.PostAsJsonAsync("/api/evaluations/runs", new TriggerEvaluationRunRequest(tenant.Id));
 
         Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
 
-        var run = await response.Content.ReadFromJsonAsync<EvaluationRunResponse>();
+        var run = await response.Content.ReadFromJsonAsync<EvaluationRunSummaryResponse>();
         Assert.NotNull(run);
         Assert.Equal(EvaluationRunStatus.Completed, run.Status);
-        Assert.Equal(1, run.TotalChecks);
+        Assert.Equal("tenant-a/evaluation-a.json", run.ResultBlobName);
+
+        var detail = await client.GetFromJsonAsync<EvaluationRunDetailResponse>($"/api/evaluations/runs/{run.Id}");
+        Assert.NotNull(detail);
+        Assert.NotNull(detail.Summary);
+        Assert.Single(detail.Templates);
     }
 
     private sealed class TestApplicationFactory : WebApplicationFactory<Program>, IAsyncDisposable
@@ -68,19 +79,21 @@ public sealed class ApiTests
             builder.ConfigureServices(services =>
             {
                 services.AddLogging(logging => logging.ClearProviders());
+                services.AddAuthentication(TestAuthHandler.SchemeName)
+                    .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(TestAuthHandler.SchemeName, static _ => { });
                 services.RemoveAll<ITenantRepository>();
                 services.RemoveAll<IEvaluationRunRepository>();
-                services.RemoveAll<ITemplateProvider>();
+                services.RemoveAll<ITemplateCatalogProvider>();
                 services.RemoveAll<ITenantCredentialProvider>();
-                services.RemoveAll<ITenantDataCollector>();
-                services.RemoveAll<IPolicyEvaluator>();
+                services.RemoveAll<ICatalogEvaluationRunner>();
+                services.RemoveAll<IEvaluationArtifactStore>();
 
                 services.AddSingleton<ITenantRepository>(TenantRepository);
                 services.AddSingleton<IEvaluationRunRepository>(RunRepository);
-                services.AddSingleton<ITemplateProvider>(new FakeTemplateProvider());
+                services.AddSingleton<ITemplateCatalogProvider>(new FakeTemplateCatalogProvider());
                 services.AddSingleton<ITenantCredentialProvider>(new FakeCredentialProvider());
-                services.AddSingleton<ITenantDataCollector>(new FakeDataCollector());
-                services.AddSingleton<IPolicyEvaluator>(new FakePolicyEvaluator());
+                services.AddSingleton<ICatalogEvaluationRunner>(new FakeCatalogEvaluationRunner());
+                services.AddSingleton<IEvaluationArtifactStore>(new FakeArtifactStore());
             });
         }
     }
@@ -136,13 +149,18 @@ public sealed class ApiTests
         }
     }
 
-    private sealed class FakeTemplateProvider : ITemplateProvider
+    private sealed class FakeTemplateCatalogProvider : ITemplateCatalogProvider
     {
-        public Task<EvaluationTemplateDefinition> LoadAsync(string? templateIdentifier, CancellationToken cancellationToken)
-            => Task.FromResult(new EvaluationTemplateDefinition(
-                templateIdentifier ?? "default-template",
+        public Task<IReadOnlyCollection<EvaluationTemplateDefinition>> LoadCatalogAsync(CancellationToken cancellationToken)
+            => Task.FromResult<IReadOnlyCollection<EvaluationTemplateDefinition>>([
+                new EvaluationTemplateDefinition(
+                "1.1.1",
+                "CIS Microsoft 365 Foundations Benchmark",
                 "v1",
-                [new EvaluationRuleDefinition("rule-1", "Rule 1", "organization.displayName", EvaluationComparisonType.Equals, EvaluationSeverity.Low, "Contoso")]));
+                "Section",
+                "Rule 1",
+                [new EvaluationCheckDefinition("C1", "Description", "graph_api", "GET /organization", ["Organization.Read.All"], "tenantType = AAD")])
+            ]);
     }
 
     private sealed class FakeCredentialProvider : ITenantCredentialProvider
@@ -154,15 +172,59 @@ public sealed class ApiTests
             => Task.FromResult("secret");
     }
 
-    private sealed class FakeDataCollector : ITenantDataCollector
+    private sealed class FakeCatalogEvaluationRunner : ICatalogEvaluationRunner
     {
-        public Task<TenantEvaluationSnapshot> CollectAsync(Tenant tenant, string clientSecret, EvaluationTemplateDefinition template, CancellationToken cancellationToken)
-            => Task.FromResult(new TenantEvaluationSnapshot(new Dictionary<string, string?> { ["organization.displayName"] = "Contoso" }));
+        public Task<EvaluationArtifactDocument> RunAsync(Tenant tenant, string clientSecret, Guid evaluationId, DateTimeOffset startedAtUtc, IReadOnlyCollection<EvaluationTemplateDefinition> templates, CancellationToken cancellationToken)
+            => Task.FromResult(new EvaluationArtifactDocument(
+                evaluationId,
+                tenant.Id,
+                startedAtUtc,
+                startedAtUtc.AddMinutes(1),
+                EvaluationRunStatus.Completed,
+                new EvaluationArtifactSummary(1, 1, 0, 0, 1, 0),
+                [new EvaluationArtifactTemplateResult("1.1.1", "CIS Microsoft 365 Foundations Benchmark", "v1", "Section", "Rule 1", [
+                    new EvaluationCheckResult("1.1.1", "C1", "Rule 1", "Description", "graph_api", "GET /organization", ["Organization.Read.All"], "tenantType = AAD", EvaluationCheckStatus.Passed, "AAD", "{\"tenantType\":\"AAD\"}", null)
+                ])]));
     }
 
-    private sealed class FakePolicyEvaluator : IPolicyEvaluator
+    private sealed class FakeArtifactStore : IEvaluationArtifactStore
     {
-        public IReadOnlyCollection<EvaluationResult> Evaluate(EvaluationTemplateDefinition template, TenantEvaluationSnapshot snapshot)
-            => [new EvaluationResult("rule-1", "Rule 1", EvaluationCheckStatus.Passed, EvaluationSeverity.Low, "Contoso", "Contoso", null)];
+        private readonly Dictionary<string, EvaluationArtifactDocument> _artifacts = [];
+
+        public Task<string> SaveAsync(EvaluationArtifactDocument artifact, CancellationToken cancellationToken)
+        {
+            const string blobName = "tenant-a/evaluation-a.json";
+            _artifacts[blobName] = artifact;
+            return Task.FromResult(blobName);
+        }
+
+        public Task<EvaluationArtifactDocument?> GetAsync(string blobName, CancellationToken cancellationToken)
+            => Task.FromResult(_artifacts.TryGetValue(blobName, out var artifact) ? artifact : null);
+    }
+
+    private sealed class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
+    {
+        public const string SchemeName = "Test";
+
+        public TestAuthHandler(
+            IOptionsMonitor<AuthenticationSchemeOptions> options,
+            ILoggerFactory logger,
+            UrlEncoder encoder)
+            : base(options, logger, encoder)
+        {
+        }
+
+        protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+        {
+            var identity = new ClaimsIdentity(
+            [
+                new Claim(ClaimTypes.NameIdentifier, "test-user"),
+                new Claim("tid", "7f8ac17c-e18d-4f8e-a8ec-9fb46868bb8f"),
+                new Claim("aud", "8e50ea44-eb28-45bf-84d4-752025d25b46")
+            ], SchemeName);
+            var principal = new ClaimsPrincipal(identity);
+            var ticket = new AuthenticationTicket(principal, SchemeName);
+            return Task.FromResult(AuthenticateResult.Success(ticket));
+        }
     }
 }

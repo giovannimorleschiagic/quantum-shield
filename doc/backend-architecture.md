@@ -36,27 +36,70 @@ Api → Business → Domain ← Infrastructure
 
 > ⚠️ Le **interfacce di servizio** (`ITenantService`, `IEvaluationRunService`, `ITenantCredentialProvider`) sono nel **Domain layer**, non in Business. Questo evita riferimenti circolari tra Business e Infrastructure.
 
-## Registrazione servizi (`Program.cs`)
+## Autenticazione API (JWT Bearer)
+
+Tutte le API sono protette con **Azure AD JWT Bearer authentication**. La policy di fallback richiede utente autenticato su ogni endpoint.
 
 ```csharp
-builder.Services.AddBusiness();
-builder.Services.AddInfrastructure(builder.Configuration);
+// Program.cs
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = $"https://login.microsoftonline.com/{tenantId}/v2.0";
+        options.TokenValidationParameters = new() {
+            ValidAudience = authOptions.Audience,
+            ValidateIssuer = true, ValidateLifetime = true, ValidateIssuerSigningKey = true
+        };
+        // Evento: verifica che il token sia dello stesso tenant (claim "tid")
+    });
+builder.Services.AddAuthorizationBuilder()
+    .SetFallbackPolicy(/* RequireAuthenticatedUser */);
 ```
 
-I metodi di estensione sono definiti in `ServiceCollectionExtensions` dentro Business e Infrastructure. Tutte le opzioni vengono validate all'avvio (`ValidateOnStart`).
+Configurazione richiesta (`appsettings.json`):
 
-## DbContext
+```json
+"Authentication": {
+  "TenantId": "<guid-tenant-azure-ad>",
+  "Audience": "<guid-client-id-backend-app>"
+}
+```
 
-Il contesto EF si chiama **`ZeroTrustDbContext`** (non `QuantumShieldDbContext`).
-Tabelle: `Tenants`, `EvaluationRuns`, `EvaluationResults`.
+---
 
 ## Sezioni di configurazione (`appsettings.json`)
 
 | Sezione | Classe Options | Descrizione |
 |---|---|---|
+| `Authentication` | `BearerAuthenticationOptions` | TenantId + Audience per JWT Bearer |
 | `SqlDatabase` | `SqlDatabaseOptions` | Connection string SQL Server |
-| `BlobStorage` | `BlobStorageOptions` | Azure Blob (template JSON) |
+| `BlobStorage` | `BlobStorageOptions` | Azure Blob (template, artifacts) |
 | `KeyVault` | `KeyVaultOptions` | Azure Key Vault URI |
 | `Graph` | `GraphOptions` | Scopes Microsoft Graph |
 
-Tutte le sezioni sono obbligatorie; mancanze causano errore all'avvio.
+`BlobStorage` ha 3 container:
+
+| Chiave | Default | Uso |
+|---|---|---|
+| `TemplateContainerName` | `evaluation-templates` | Template CIS JSON |
+| `DefaultTemplateBlobName` | `default-template.json` | Template di default |
+| `EvaluationResultContainerName` | `evaluation-results` | Artefatti JSON dei run |
+
+Tutte le sezioni sono obbligatorie; mancanze causano errore all'avvio (`ValidateOnStart`).
+
+---
+
+## DbContext
+
+Il contesto EF si chiama **`ZeroTrustDbContext`**.
+Tabelle: `Tenants`, `EvaluationRuns`.
+
+> ⚠️ La tabella `EvaluationResults` è stata **rimossa** con la migration `CatalogEvaluationRunRefactor`. I risultati dettagliati sono ora serializzati come JSON in un **blob Azure Storage** (`EvaluationResultContainerName`). In SQL viene salvato solo il `ResultBlobName` (nome del blob).
+
+## Registrazione servizi
+
+```csharp
+builder.Services.AddBusiness();
+builder.Services.AddInfrastructure(builder.Configuration);
+```

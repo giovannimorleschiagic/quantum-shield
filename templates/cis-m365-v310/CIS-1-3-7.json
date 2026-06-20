@@ -13,13 +13,15 @@
   ],
   "checks": [
     {
-      "portal": "Microsoft 365 Admin Center > Impostazioni > Org Settings > Microsoft 365 on the web",
       "check_id": "C1",
-      "expected_result": "Opzione 'Allow users to open files stored in third-party storage services in Microsoft 365 on the web' = Off",
-      "result": null,
-      "status": "not_run",
       "description": "Verificare che i servizi di storage di terze parti (Dropbox, Box, Google Drive) siano disabilitati in Office on the web",
-      "method": "manual_admin_center"
+      "method": "manual_admin_center",
+      "portal_path": "M365 Admin Center > Impostazioni > Org Settings > Microsoft 365 on the web",
+      "graph_permissions": [],
+      "expected_result": "'Allow users to open files in third-party storage' = Off. Nessuna Graph API disponibile.",
+      "api_note": "NOTA: Questa impostazione non è esposta tramite Microsoft Graph API.",
+      "status": "not_run",
+      "result": null
     }
   ],
   "section": "1 - Microsoft 365 Administration",

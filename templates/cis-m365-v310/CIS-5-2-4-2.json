@@ -28,7 +28,7 @@
       ],
       "description": "Verificare accesso al report SSPR e revisione settimanale documentata",
       "expected_result": "Report accessibile e consultato almeno settimanalmente (verifica procedurale)",
-      "endpoint": "GET /auditLogs/directoryAudits?$filter=loggedByService eq 'Self-service Password Management'&$orderby=activityDateTime desc&$top=50",
+      "endpoint": "GET /auditLogs/directoryAudits?$filter=loggedByService eq 'Self-service Password Management'&$top=10&$orderby=activityDateTime desc",
       "result": null,
       "check_id": "C1",
       "license_required": "Microsoft Entra ID P1"

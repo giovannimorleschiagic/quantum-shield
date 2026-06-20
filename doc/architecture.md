@@ -69,14 +69,21 @@ index.tsx
 ## Flusso assessment BE
 
 ```
-POST /api/evaluations/runs
+POST /api/evaluations/runs  [Bearer token richiesto]
   └─ EvaluationRunService.TriggerAsync()
-       ├─ Carica template JSON  ← BlobTemplateProvider (Azure Blob)
-       ├─ Recupera secret       ← KeyVaultTenantCredentialProvider (Azure Key Vault)
-       ├─ Raccoglie dati tenant ← MicrosoftGraphTenantDataCollector (Microsoft Graph)
-       └─ Valuta regole         ← PolicyEvaluator (confronto DataPath → snapshot)
-            └─ EvaluationRun.Complete(results) → salva su ZeroTrustDbContext (SQL Server)
+       ├─ Crea EvaluationRun Pending → persiste su SQL
+       ├─ Carica tutti i template  ← FileSystemTemplateCatalogProvider (filesystem locale)
+       ├─ Recupera client secret   ← KeyVaultTenantCredentialProvider (Azure Key Vault)
+       ├─ EvaluationRun.MarkInProgress() → aggiorna SQL
+       ├─ CatalogEvaluationRunner.RunAsync()
+       │    ├─ Ottiene token Graph via ClientSecretCredential
+       │    ├─ Esegue check graph_api per ogni template (HTTP → Graph API)
+       │    └─ Produce EvaluationArtifactDocument
+       ├─ EvaluationArtifactBlobStore.SaveAsync() → salva JSON su Blob Storage
+       └─ EvaluationRun.Complete(blobName) → persiste solo il nome blob su SQL
 ```
+
+> I risultati dettagliati non sono in SQL. In SQL c'è solo `ResultBlobName`. Il documento completo vive su Azure Blob Storage.
 
 ## Infrastruttura Azure
 

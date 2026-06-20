@@ -11,6 +11,156 @@ Rappresenta un tenant Azure AD monitorato.
 | `TenantName` | `string` | Max 200 caratteri |
 | `TenantId` | `string` (GUID) | Tenant ID Azure AD, validato come GUID |
 | `ClientId` | `string` (GUID) | App registration, validato come GUID |
+| `SecretReference` | `string` | URI versioned del secret in Key Vault (non il secret in chiaro) |
+| `IsActive` | `bool` | Default `true` |
+| `CreatedAtUtc` | `DateTimeOffset` | Impostato alla creazione |
+| `UpdatedAtUtc` | `DateTimeOffset` | Aggiornato ad ogni `Update()` |
+
+Factory methods:
+- **`Tenant.Create(tenantName, tenantId, clientId, secretReference, isActive)`** — crea con `Guid.NewGuid()`
+- **`Tenant.Create(id, ...)`** — overload con ID esplicito
+- **`Tenant.Rehydrate(...)`** — ricostituisce da persistence (con `createdAtUtc`/`updatedAtUtc` esistenti)
+
+---
+
+### `EvaluationRun`
+Rappresenta l'esecuzione di un assessment CIS su un tenant.
+
+**State machine:**
+```
+Pending → InProgress → Completed
+                     ↘ Failed
+```
+
+| Proprietà | Tipo | Note |
+|---|---|---|
+| `Id` | `Guid` | Auto-generato |
+| `TenantId` | `Guid` | Riferimento al tenant |
+| `Status` | `EvaluationRunStatus` | State machine |
+| `ResultBlobName` | `string?` | Nome del blob su Azure Storage contenente l'artefatto JSON |
+| `StartedAtUtc` | `DateTimeOffset` | Impostato alla creazione |
+| `CompletedAtUtc` | `DateTimeOffset?` | Impostato in `Complete()` o `Fail()` |
+| `Artifact` | `EvaluationArtifactDocument?` | Caricato lazy da blob — non persistito in SQL |
+
+| Metodo | Transizione | Note |
+|---|---|---|
+| `CreatePending(tenantId)` | → Pending | Factory static |
+| `MarkInProgress()` | Pending → InProgress | Precondizione: Pending |
+| `Complete(resultBlobName)` | InProgress → Completed | Persiste solo il blob name, non i risultati in SQL |
+| `AttachArtifact(artifact)` | — | Carica il documento JSON già letto da blob |
+| `Fail()` | * → Failed | Non deve essere già Completed/Failed |
+
+> ⚠️ **Breaking change**: `Complete()` non riceve più la lista di `EvaluationResult`. Riceve il `resultBlobName` (stringa). I risultati dettagliati vivono nell'`EvaluationArtifactDocument` su Blob Storage.
+
+---
+
+### `EvaluationArtifactDocument` (record)
+Documento JSON serializzato su Azure Blob Storage. Contiene l'intera analisi di una run.
+
+```csharp
+record EvaluationArtifactDocument(
+    Guid EvaluationId,
+    Guid TenantId,
+    DateTimeOffset StartedAtUtc,
+    DateTimeOffset? CompletedAtUtc,
+    EvaluationRunStatus Status,
+    EvaluationArtifactSummary Summary,
+    IReadOnlyCollection<EvaluationArtifactTemplateResult> Templates)
+```
+
+**`EvaluationArtifactSummary`**: `TotalChecks`, `PassedChecks`, `FailedChecks`, `NotApplicableChecks`, `TemplatesProcessed`, `TemplatesSkipped`
+
+**`EvaluationArtifactTemplateResult`**: `ControlId`, `Benchmark`, `Version`, `Section`, `Title`, `Checks`
+
+**`EvaluationCheckResult`**: `ControlId`, `CheckId`, `Title`, `Description`, `Method`, `Endpoint`, `GraphPermissions`, `ExpectedResult`, `Status`, `ActualResult`, `RawResult`, `Notes`
+
+---
+
+### `EvaluationTemplateDefinition`
+Caricato da filesystem (`templates/cis-m365-v310/`). Contiene una lista di `EvaluationCheckDefinition`.
+
+Proprietà: `ControlId`, `Benchmark`, `Version?`, `Section`, `Title`, `Checks[]`
+
+Computed: `AutomaticChecks` → filtra i check con `method == graph_api`
+
+---
+
+### `EvaluationCheckDefinition`
+Definizione di un singolo check all'interno di un template.
+
+| Proprietà | Note |
+|---|---|
+| `CheckId` | Es. `C1`, `C2` |
+| `Description` | Testo descrittivo |
+| `Method` | `graph_api`, `exchange_powershell`, `manual`, ecc. |
+| `Endpoint` | URL Graph API (nullable per metodi non automatici) |
+| `GraphPermissions` | Lista di permessi Application richiesti |
+| `ExpectedResult` | Valore atteso della verifica |
+| `IsAutomatic` | `true` se `Method == "graph_api"` |
+
+---
+
+## Interfacce di servizio (Domain layer)
+
+| Interfaccia | Implementazione | Layer |
+|---|---|---|
+| `ITenantService` | `TenantService` | Business |
+| `IEvaluationRunService` | `EvaluationRunService` | Business |
+| `ITenantCredentialProvider` | `KeyVaultTenantCredentialProvider` | Infrastructure |
+| `ICatalogEvaluationRunner` | `CatalogEvaluationRunner` | Infrastructure |
+| `IEvaluationArtifactStore` | `EvaluationArtifactBlobStore` | Infrastructure |
+| `ITemplateCatalogProvider` | `FileSystemTemplateCatalogProvider` | Infrastructure |
+| `ITenantRepository` | EF Core repository | Infrastructure |
+| `IEvaluationRunRepository` | EF Core repository | Infrastructure |
+
+---
+
+## `ITenantCredentialProvider`
+
+```csharp
+Task<string> SaveClientSecretAsync(Guid tenantId, string clientSecret, CancellationToken ct);
+Task<string> GetClientSecretAsync(Tenant tenant, CancellationToken ct);
+```
+
+Naming convention Key Vault: `tenant-{tenantId:N}-client-secret`
+
+---
+
+## Enums
+
+| Enum | Valori |
+|---|---|
+| `EvaluationRunStatus` | `Pending=1`, `InProgress=2`, `Completed=3`, `Failed=4` |
+| `EvaluationCheckStatus` | `Passed`, `Failed`, `NotApplicable` |
+| `EvaluationSeverity` | `Low`, `Medium`, `High`, `Critical` |
+
+---
+
+## Eccezioni
+
+**`DomainValidationException`**: lanciata dai modelli di dominio. I controller la catturano e restituiscono `ValidationProblem`.
+
+---
+
+## Pattern del dominio
+
+- Costruttori sempre **privati** — usare factory static (`Create`, `CreatePending`)
+- Tutte le proprietà con setter **privati** — mutazione solo tramite metodi espliciti
+- Validazioni inline nel costruttore/factory — nessun framework esterno di validazione
+- Tutti i valori stringa vengono `.Trim()`-ati in ingresso
+
+
+## Modelli principali
+
+### `Tenant`
+Rappresenta un tenant Azure AD monitorato.
+
+| Proprietà | Tipo | Note |
+|---|---|---|
+| `Id` | `Guid` | Generato alla creazione |
+| `TenantName` | `string` | Max 200 caratteri |
+| `TenantId` | `string` (GUID) | Tenant ID Azure AD, validato come GUID |
+| `ClientId` | `string` (GUID) | App registration, validato come GUID |
 | `SecretReference` | `string` | Nome o URI completo del secret in Key Vault |
 | `IsActive` | `bool` | Default `true` |
 | `CreatedAtUtc` | `DateTimeOffset` | Impostato alla creazione |

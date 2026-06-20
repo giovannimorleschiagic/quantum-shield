@@ -31,7 +31,7 @@
       ],
       "result": null,
       "status": "not_run",
-      "endpoint": "GET /reports/authenticationMethods/userRegistrationDetails?$filter=isMfaCapable eq false and userType eq 'member'&$select=userPrincipalName,isMfaCapable,isMfaRegistered,defaultMfaMethod"
+      "endpoint": "GET /reports/authenticationMethods/userRegistrationDetails?$filter=isMfaCapable eq false and userType eq 'member'&$select=userPrincipalName,isMfaCapable,isMfaRegistered"
     }
   ]
 }

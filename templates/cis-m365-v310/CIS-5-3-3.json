@@ -20,52 +20,56 @@
       "check_id": "C1",
       "license_required": "Microsoft Entra ID P2",
       "description": "Verificare che esista un Access Review per ruoli privilegiati (almeno Global Admin, Privileged Role Admin, Security Admin)",
-      "endpoint": "GET /identityGovernance/accessReviews/definitions?$filter=scope/resourceScopes/any(r:contains(r/query,'/roleAssignments'))",
+      "endpoint": "GET /identityGovernance/accessReviews/definitions?$top=100",
       "result": null,
       "expected_result": "Access Review definitions che coprono ruoli privilegiati",
       "graph_permissions": [
         "AccessReview.Read.All"
       ],
-      "method": "graph_api"
+      "method": "graph_api",
+      "api_version": "beta"
     },
     {
       "status": "not_run",
       "check_id": "C2",
       "license_required": "Microsoft Entra ID P2",
       "description": "Verificare che l'Access Review per i ruoli privilegiati abbia cadenza almeno trimestrale",
-      "endpoint": "GET /identityGovernance/accessReviews/definitions/{id}",
+      "endpoint": "GET /identityGovernance/accessReviews/definitions?$select=id,displayName,settings,scope",
       "result": null,
-      "expected_result": "recurrence.pattern.interval <= 90 giorni (o frequency mensile/trimestrale)",
+      "expected_result": "recurrence.pattern.interval <= 90 giorni per definizioni con scope ruoli privilegiati",
       "graph_permissions": [
         "AccessReview.Read.All"
       ],
-      "method": "graph_api"
+      "method": "graph_api",
+      "api_version": "beta"
     },
     {
       "status": "not_run",
       "check_id": "C3",
       "license_required": "Microsoft Entra ID P2",
       "description": "Verificare che il reviewer non sia il membro del ruolo stesso (no self-review per ruoli privilegiati)",
-      "endpoint": "GET /identityGovernance/accessReviews/definitions/{id}?$select=reviewers",
+      "endpoint": "GET /identityGovernance/accessReviews/definitions?$select=id,displayName,reviewers,scope",
       "result": null,
-      "expected_result": "reviewers = manager o gruppo dedicato, NON 'self'",
+      "expected_result": "reviewers[].query non contiene solo '/me' (self-review vietato per ruoli privilegiati)",
       "graph_permissions": [
         "AccessReview.Read.All"
       ],
-      "method": "graph_api"
+      "method": "graph_api",
+      "api_version": "beta"
     },
     {
       "status": "not_run",
       "check_id": "C4",
       "license_required": "Microsoft Entra ID P2",
       "description": "Verificare che la mancata risposta del reviewer rimuova automaticamente l'accesso privilegiato",
-      "endpoint": "GET /identityGovernance/accessReviews/definitions/{id}?$select=settings",
+      "endpoint": "GET /identityGovernance/accessReviews/definitions?$select=id,displayName,settings,scope",
       "result": null,
       "expected_result": "settings.defaultDecision = 'Deny' e settings.autoApplyDecisionsEnabled = true",
       "graph_permissions": [
         "AccessReview.Read.All"
       ],
-      "method": "graph_api"
+      "method": "graph_api",
+      "api_version": "beta"
     }
   ],
   "version": "3.1.0",

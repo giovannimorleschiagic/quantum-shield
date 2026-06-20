@@ -32,30 +32,32 @@
       ],
       "result": null,
       "status": "not_run",
-      "endpoint": "GET /organization?$select=onPremisesSyncEnabled"
+      "endpoint": "GET /organization?$select=id,displayName,onPremisesSyncEnabled,onPremisesLastSyncDateTime"
     },
     {
       "status": "not_run",
-      "method": "graph_api",
-      "b2c_supported": false,
+      "method": "manual_admin_center",
       "graph_permissions": [
         "Policy.Read.All"
       ],
       "description": "Verificare che Azure AD Password Protection proxy e DC agent siano installati e registrati",
       "expected_result": "Proxy agent registrato, DC agent installato su tutti i domain controller",
-      "endpoint": "GET /directory/passwordHashAuthenticationMethod - Verifica tramite Entra Admin Center > Protezione > Metodi di autenticazione > Password Protection > On-premises",
+      "endpoint": null,
       "result": null,
       "check_id": "C2",
-      "license_required": "Microsoft Entra ID P1"
+      "license_required": "Microsoft Entra ID P1",
+      "portal_path": "Microsoft Entra admin center > Protection > Authentication methods > Password protection > Enable password protection on Windows Server Active Directory (Mode: Enforced)",
+      "api_note": "Lo stato del DC Agent / Proxy di Azure AD Password Protection on-prem non e' esposto in Microsoft Graph. Verifica manuale nel portale e sui Domain Controller."
     },
     {
-      "expected_result": "Mode = Enforced (non Audit)",
-      "method": "manual_admin_center",
-      "description": "Verificare che la modalità operativa sia 'Enforced' e non solo 'Audit'",
-      "portal": "Entra Admin Center > Protezione > Metodi di autenticazione > Password Protection > Mode",
       "check_id": "C3",
+      "description": "Verificare che la modalità operativa sia Enforced e non Audit",
+      "method": "manual_admin_center",
+      "portal_path": "Entra Admin Center > Protezione > Metodi di autenticazione > Password Protection > Mode",
+      "graph_permissions": [],
+      "expected_result": "Mode = Enforced (non Audit). Nessuna Graph API disponibile per questa impostazione specifica.",
+      "api_note": "NOTA: Il valore Mode (Enforced/Audit) della Password Protection on-prem non è esposto tramite Graph API.",
       "status": "not_run",
-      "license_required": "Microsoft Entra ID P1",
       "result": null
     }
   ]

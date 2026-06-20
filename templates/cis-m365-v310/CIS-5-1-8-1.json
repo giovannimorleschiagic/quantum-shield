@@ -19,7 +19,7 @@
     {
       "result": null,
       "expected_result": "onPremisesSyncEnabled = true per ambienti ibridi; se false = cloud-only, controllo N/A",
-      "endpoint": "GET /organization?$select=onPremisesSyncEnabled",
+      "endpoint": "GET /organization?$select=id,displayName,onPremisesSyncEnabled,onPremisesLastSyncDateTime",
       "graph_permissions": [
         "Organization.Read.All"
       ],
@@ -31,7 +31,7 @@
     {
       "result": null,
       "expected_result": "Password Hash Sync abilitato in Azure AD Connect (passwordHashSyncEnabled = true)",
-      "endpoint": "GET /organization?$select=onPremisesLastSyncDateTime,onPremisesSyncEnabled - dettagli PHS tramite Azure AD Connect Health o Get-ADSyncScheduler (on-prem PowerShell)",
+      "endpoint": "GET /organization?$select=id,displayName,onPremisesSyncEnabled,onPremisesLastSyncDateTime",
       "graph_permissions": [
         "Organization.Read.All"
       ],

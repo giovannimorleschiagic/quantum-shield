@@ -61,8 +61,10 @@ cd src/BE && dotnet ef database update --project QuantumShield.Be.Infrastructure
 cd src/GW && terraform init && terraform apply -var-file=terraform.tfvars
 ```
 
-- Configurazione MSAL FE: valori hardcoded in dev (`authConfig.ts`), flusso **redirect** (non popup)
-- Configurazione BE richiesta: `SqlDatabase`, `BlobStorage`, `KeyVault`, `Graph` in `appsettings.json` / secrets
+- Configurazione MSAL FE: env vars `REACT_APP_MSAL_CLIENT_ID`, `REACT_APP_MSAL_TENANT_ID`, `REACT_APP_MSAL_REDIRECT_URI` (file `.env.local` in `src/FE/`); API base URL: `REACT_APP_API_BASE_URL`
+- Configurazione BE richiesta: `Authentication`, `SqlDatabase`, `BlobStorage`, `KeyVault`, `Graph` in `appsettings.json` / secrets
 - UI sempre in **italiano**
-- Backend: architettura a layer (Domain → Business → Infrastructure ← Api), interfacce servizi nel **Domain**, `ZeroTrustDbContext` su SQL Server
-- Key Vault: i client secret dei tenant sono salvati con naming `tenant-{id:N}-client-secret`; in DB si persiste solo il **SecretReference** (URI versioned)
+- Backend: architettura a layer (Domain → Business → Infrastructure ← Api), interfacce servizi nel **Domain**, JWT Bearer su tutti gli endpoint
+- Risultati assessment: artefatto JSON su Azure Blob Storage (non in SQL); SQL conserva solo `ResultBlobName`
+- Key Vault: client secret tenant con naming `tenant-{id:N}-client-secret`; in DB si persiste solo il **SecretReference** (URI versioned)
+- Templates CIS caricati da **filesystem** (`FileSystemTemplateCatalogProvider`), non da Blob

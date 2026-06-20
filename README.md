@@ -58,6 +58,15 @@ npm install
 npm start          # http://localhost:3000
 ```
 
+Variabili d'ambiente in `src/FE/.env.local`:
+
+```env
+REACT_APP_MSAL_CLIENT_ID=<guid-app-azure>
+REACT_APP_MSAL_TENANT_ID=<guid-tenant>
+REACT_APP_MSAL_REDIRECT_URI=http://localhost:3000/
+REACT_APP_API_BASE_URL=https://localhost:7261
+```
+
 ### Backend
 
 ```bash
@@ -69,10 +78,18 @@ Configurazione richiesta in `appsettings.Development.json` o User Secrets:
 
 ```json
 {
+  "Authentication": {
+    "TenantId": "<guid-tenant-azure-ad>",
+    "Audience": "<guid-client-id-backend>"
+  },
   "SqlDatabase": { "ConnectionString": "<SQL Server connection string>" },
-  "BlobStorage": { "ConnectionString": "<Azure Blob connection string>" },
-  "KeyVault":    { "Uri": "https://<vault-name>.vault.azure.net/" },
-  "Graph":       { "Scopes": ["https://graph.microsoft.com/.default"] }
+  "BlobStorage": {
+    "ConnectionString": "<Azure Blob connection string>",
+    "TemplateContainerName": "evaluation-templates",
+    "EvaluationResultContainerName": "evaluation-results"
+  },
+  "KeyVault": { "VaultUri": "https://<vault-name>.vault.azure.net/" },
+  "Graph":    { "Scopes": ["https://graph.microsoft.com/.default"] }
 }
 ```
 
@@ -81,11 +98,13 @@ Configurazione richiesta in `appsettings.Development.json` o User Secrets:
 ```bash
 cd src/GW
 copy terraform.tfvars.example terraform.tfvars
-# Modificare terraform.tfvars con i valori dell'ambiente
+# Compilare terraform.tfvars con SP credentials, SQL password, subscription/tenant ID
 terraform init
 terraform plan -var-file=terraform.tfvars
 terraform apply -var-file=terraform.tfvars
 ```
+
+Il modulo provisionia l'ambiente completo: AppGW, App Service (BE + FE statico), Key Vault, SQL Server, SQL Database, Storage Account, Application Insights.
 
 ---
 
@@ -178,9 +197,12 @@ cd src/GW && terraform destroy -var-file=terraform.tfvars
 ## Sicurezza
 
 - I **client secret** dei tenant non vengono mai persistiti nel database. Vengono salvati in Azure Key Vault con naming `tenant-{id}-client-secret`; nel DB è conservato solo l'URI del secret (SecretReference).
+- I **risultati degli assessment** non sono in SQL. Vengono serializzati come JSON su Azure Blob Storage; in SQL c'è solo il `ResultBlobName` (puntatore al blob).
 - L'identità dell'API BE in produzione usa **Managed Identity** — zero credenziali statiche nel codice.
-- Il frontend non contiene secret nel bundle JS — la configurazione MSAL usa solo `clientId` e `tenantId` pubblici.
+- Il backend App Service accetta traffico **solo dalla subnet AppGW** (IP restriction Terraform).
+- Il frontend non contiene secret nel bundle JS — la configurazione MSAL usa env vars pubbliche.
 - Ogni query al database filtra obbligatoriamente per `TenantId` — segregazione completa dei dati tra clienti.
+- Tutte le API sono protette da **JWT Bearer Azure AD** (fallback policy su ogni endpoint).
 
 ---
 

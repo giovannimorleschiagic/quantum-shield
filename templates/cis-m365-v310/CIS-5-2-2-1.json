@@ -23,7 +23,7 @@
       "check_id": "C1",
       "status": "not_run",
       "method": "graph_api",
-      "endpoint": "GET /identity/conditionalAccess/policies?$filter=state eq 'enabled'"
+      "endpoint": "GET /identity/conditionalAccess/policies"
     },
     {
       "graph_permissions": [
@@ -31,12 +31,12 @@
       ],
       "result": null,
       "license_required": "Microsoft Entra ID P1",
-      "expected_result": "grantControls.builtInControls contiene 'mfa'",
+      "expected_result": "Trovare policy con grantControls.builtInControls=['mfa'] applicata a ruoli admin",
       "description": "La policy CA richiede MFA nel grant control",
       "check_id": "C2",
       "status": "not_run",
       "method": "graph_api",
-      "endpoint": "GET /identity/conditionalAccess/policies/{id}"
+      "endpoint": "GET /identity/conditionalAccess/policies?$select=id,displayName,state,conditions,grantControls"
     },
     {
       "graph_permissions": [
@@ -44,12 +44,12 @@
       ],
       "result": null,
       "license_required": "Microsoft Entra ID P1",
-      "expected_result": "excludedRoles non contiene ruoli privilegiati ad eccezione degli account break-glass documentati",
+      "expected_result": "Verificare che conditions.users.excludedRoles non contenga ruoli admin critici (eccetto break-glass)",
       "description": "Verificare che nessun ruolo admin critico sia escluso dalla policy (eccetto break-glass)",
       "check_id": "C3",
       "status": "not_run",
       "method": "graph_api",
-      "endpoint": "GET /identity/conditionalAccess/policies/{id}?$select=conditions"
+      "endpoint": "GET /identity/conditionalAccess/policies?$select=id,displayName,state,conditions,grantControls"
     }
   ],
   "remediation": {

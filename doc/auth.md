@@ -4,21 +4,29 @@
 
 `src/FE/src/authConfig.ts`
 
-## Configurazione attuale (ambiente di sviluppo)
+## Variabili d'ambiente (`.env.local` in `src/FE/`)
 
-In sviluppo, `authConfig.ts` usa valori **hardcoded** per `clientId`, `tenantId` e `redirectUri`:
-
-```ts
-const clientId = "837e627e-f1a0-471f-af65-70b69f7d073d";
-const tenantId = "7f8ac17c-e18d-4f8e-a8ec-9fb46868bb8f";
-const redirectUri = "http://localhost:3000/";
+```env
+REACT_APP_MSAL_CLIENT_ID=<guid-client-id-app-azure>
+REACT_APP_MSAL_TENANT_ID=<guid-tenant-id>
+REACT_APP_MSAL_REDIRECT_URI=http://localhost:3000/    # opzionale, default http://localhost:3000/
+REACT_APP_API_BASE_URL=https://localhost:7261          # URL backend API
 ```
 
-> ⚠️ In produzione questi valori devono essere parametrizzati (env vars o configurazione esterna).
+| Variabile | Obbligatoria | Default | Descrizione |
+|---|---|---|---|
+| `REACT_APP_MSAL_CLIENT_ID` | ✅ | — | Client ID dell'app registrata in Azure AD |
+| `REACT_APP_MSAL_TENANT_ID` | ✅ | — | Tenant ID Azure AD |
+| `REACT_APP_MSAL_REDIRECT_URI` | ❌ | `http://localhost:3000/` | URI di redirect post-autenticazione |
+| `REACT_APP_API_BASE_URL` | ❌ | `https://localhost:7261` | Base URL del backend API (usata da axios) |
 
 ## Configurazione MSAL
 
 ```ts
+const clientId = process.env.REACT_APP_MSAL_CLIENT_ID!;
+const tenantId = process.env.REACT_APP_MSAL_TENANT_ID!;
+const redirectUri = process.env.REACT_APP_MSAL_REDIRECT_URI ?? "http://localhost:3000/";
+
 export const msalConfig: Configuration = {
   auth: {
     clientId,
@@ -31,7 +39,7 @@ export const msalConfig: Configuration = {
   system: {
     loggerOptions: {
       loggerCallback: (level, message, containsPii) => {
-        if (containsPii) return;                    // PII sempre filtrato
+        if (containsPii) return;
         if (level === LogLevel.Error) console.error(message);
       },
     },
@@ -49,23 +57,20 @@ export const loginRequest: RedirectRequest = {
 
 ## Flusso redirect (corrente)
 
-- **Login**: `instance.loginRedirect(loginRequest)` — reindirizza l'utente ad Azure AD e torna al `redirectUri`
-- **Logout**: `instance.logoutRedirect({ account, postLogoutRedirectUri: window.location.origin })` — termina sessione
-- Il flusso è **redirect**, **non popup** — la pagina viene abbandonata durante l'autenticazione
-- Dopo il ritorno dal redirect, MSAL risolve il token e aggiorna `accounts[]` automaticamente
+- **Login**: `instance.loginRedirect(loginRequest)` — reindirizza ad Azure AD e torna al `redirectUri`
+- **Logout**: `instance.logoutRedirect({ account, postLogoutRedirectUri: window.location.origin })`
+- Il flusso è **redirect**, **non popup**
 
 ## Inizializzazione in `index.tsx`
 
 ```ts
 const msalInstance = new PublicClientApplication(msalConfig);
-
 msalInstance.initialize().then(() => {
-  // montare React solo dopo che MSAL ha completato l'inizializzazione
   root.render(<MsalProvider instance={msalInstance}><App /></MsalProvider>);
 });
 ```
 
-> `initialize()` è obbligatorio prima del render — gestisce il ritorno dal redirect e ripristina la sessione.
+> `initialize()` è obbligatorio prima del render — gestisce il ritorno dal redirect.
 
 ## Stato autenticazione in `App.tsx`
 
@@ -82,7 +87,3 @@ useEffect(() => {
   }
 }, [inProgress, activeAccount]);
 ```
-
-- `isBusy` disabilita entrambi i pulsanti durante operazioni in corso
-- `activeAccount` è il primo account nella lista MSAL
-- `useEffect` + `useRef` gestisce il messaggio di conferma post-redirect senza re-render infinito

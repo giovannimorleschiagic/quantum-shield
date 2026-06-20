@@ -24,6 +24,7 @@ public sealed class ZeroTrustDbContext : DbContext
             entity.Property(item => item.TenantId).HasMaxLength(64).IsRequired();
             entity.Property(item => item.ClientId).HasMaxLength(64).IsRequired();
             entity.Property(item => item.SecretReference).HasMaxLength(500).IsRequired();
+            entity.Property(item => item.IsB2C).IsRequired();
             entity.Property(item => item.CreatedAtUtc).IsRequired();
             entity.Property(item => item.UpdatedAtUtc).IsRequired();
         });

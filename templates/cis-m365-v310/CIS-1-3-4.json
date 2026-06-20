@@ -20,6 +20,7 @@
       "method": "graph_api",
       "result": null,
       "status": "not_run",
+      "b2c_supported": false,
       "expected_result": "Nel portale M365 Admin: Impostazioni > Org Settings > User owned apps = Off; Let users access the Office Store = Off",
       "check_id": "C1",
       "description": "Verificare che gli utenti non possano installare app da Office Store e che i trial self-service siano disabilitati"

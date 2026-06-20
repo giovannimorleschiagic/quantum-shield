@@ -27,13 +27,14 @@ public sealed class TenantService : ITenantService
         string clientId,
         string clientSecret,
         bool isActive,
+        bool isB2C,
         CancellationToken cancellationToken)
     {
         ValidateClientSecret(clientSecret);
 
         var tenantIdValue = Guid.NewGuid();
         var secretReference = await _tenantCredentialProvider.SaveClientSecretAsync(tenantIdValue, clientSecret, cancellationToken);
-        var tenant = Tenant.Create(tenantIdValue, tenantName, tenantId, clientId, secretReference, isActive);
+        var tenant = Tenant.Create(tenantIdValue, tenantName, tenantId, clientId, secretReference, isActive, isB2C);
         await _tenantRepository.AddAsync(tenant, cancellationToken);
         return tenant;
     }
@@ -45,6 +46,7 @@ public sealed class TenantService : ITenantService
         string clientId,
         string clientSecret,
         bool isActive,
+        bool isB2C,
         CancellationToken cancellationToken)
     {
         var tenant = await _tenantRepository.GetByIdAsync(id, cancellationToken);
@@ -56,7 +58,7 @@ public sealed class TenantService : ITenantService
         ValidateClientSecret(clientSecret);
 
         var secretReference = await _tenantCredentialProvider.SaveClientSecretAsync(tenant.Id, clientSecret, cancellationToken);
-        tenant.Update(tenantName, tenantId, clientId, secretReference, isActive);
+        tenant.Update(tenantName, tenantId, clientId, secretReference, isActive, isB2C);
         await _tenantRepository.UpdateAsync(tenant, cancellationToken);
         return tenant;
     }

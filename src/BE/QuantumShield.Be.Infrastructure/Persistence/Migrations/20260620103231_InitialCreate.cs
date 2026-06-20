@@ -21,6 +21,7 @@ namespace QuantumShield.Be.Infrastructure.Persistence.Migrations
                     ClientId = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     SecretReference = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsB2C = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAtUtc = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedAtUtc = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },

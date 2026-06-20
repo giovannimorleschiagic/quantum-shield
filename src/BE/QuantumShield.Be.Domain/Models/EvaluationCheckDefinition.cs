@@ -10,7 +10,8 @@ public sealed class EvaluationCheckDefinition
         string method,
         string? endpoint,
         IReadOnlyCollection<string> graphPermissions,
-        string expectedResult)
+        string expectedResult,
+        bool isSupportedForB2C = true)
     {
         if (string.IsNullOrWhiteSpace(checkId))
         {
@@ -38,6 +39,7 @@ public sealed class EvaluationCheckDefinition
         Endpoint = endpoint?.Trim();
         GraphPermissions = graphPermissions;
         ExpectedResult = expectedResult.Trim();
+        IsSupportedForB2C = isSupportedForB2C;
     }
 
     public string CheckId { get; }
@@ -51,6 +53,8 @@ public sealed class EvaluationCheckDefinition
     public IReadOnlyCollection<string> GraphPermissions { get; }
 
     public string ExpectedResult { get; }
+
+    public bool IsSupportedForB2C { get; }
 
     public bool IsAutomatic => string.Equals(Method, "graph_api", StringComparison.OrdinalIgnoreCase);
 }

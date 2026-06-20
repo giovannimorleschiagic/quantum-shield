@@ -43,6 +43,7 @@ public sealed class TenantsController : ControllerBase
                 request.ClientId,
                 request.ClientSecret,
                 request.IsActive,
+                request.IsB2C,
                 cancellationToken);
 
             return CreatedAtAction(nameof(GetById), new { id = tenant.Id }, tenant.ToResponse());
@@ -68,6 +69,7 @@ public sealed class TenantsController : ControllerBase
                 request.ClientId,
                 request.ClientSecret,
                 request.IsActive,
+                request.IsB2C,
                 cancellationToken);
 
             return tenant is null ? NotFound() : Ok(tenant.ToResponse());

@@ -29,6 +29,7 @@ public sealed class ApiTests
             Guid.NewGuid().ToString(),
             Guid.NewGuid().ToString(),
             "plain-secret",
+            true,
             true));
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -37,6 +38,7 @@ public sealed class ApiTests
         Assert.NotNull(createdTenant);
         Assert.StartsWith("https://vault.example/secrets/", createdTenant.SecretReference, StringComparison.Ordinal);
         Assert.DoesNotContain("plain-secret", createdTenant.SecretReference, StringComparison.Ordinal);
+        Assert.True(createdTenant.IsB2C);
 
         var list = await client.GetFromJsonAsync<List<TenantResponse>>("/api/tenants");
 

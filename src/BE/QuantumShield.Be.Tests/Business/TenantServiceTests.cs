@@ -25,9 +25,11 @@ public sealed class TenantServiceTests
             Guid.NewGuid().ToString(),
             "plain-secret",
             true,
+            true,
             CancellationToken.None);
 
         Assert.Equal("https://vault.example/secrets/tenant-secret", tenant.SecretReference);
+        Assert.True(tenant.IsB2C);
         await credentialProvider.Received(1).SaveClientSecretAsync(tenant.Id, "plain-secret", Arg.Any<CancellationToken>());
         await tenantRepository.Received(1).AddAsync(Arg.Is<Tenant>(item => item.SecretReference == "https://vault.example/secrets/tenant-secret"), Arg.Any<CancellationToken>());
     }
@@ -49,6 +51,7 @@ public sealed class TenantServiceTests
             tenant.ClientId,
             "",
             tenant.IsActive,
+            tenant.IsB2C,
             CancellationToken.None);
 
         await Assert.ThrowsAsync<DomainValidationException>(action);

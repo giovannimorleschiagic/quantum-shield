@@ -3,6 +3,7 @@
     {
       "status": "not_run",
       "method": "graph_api",
+      "b2c_supported": false,
       "check_id": "C1",
       "expected_result": "Esiste almeno un gruppo con membershipRule contenente 'user.userType -eq Guest'",
       "result": null,

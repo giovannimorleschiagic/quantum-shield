@@ -20,6 +20,7 @@
       "result": null,
       "method": "graph_api",
       "status": "not_run",
+      "b2c_supported": false,
       "expected_result": "CustomerLockBoxEnabled = True",
       "license_required": "Microsoft 365 E5 o Office 365 E5",
       "check_id": "C1",

@@ -13,6 +13,7 @@ internal static class ApiMappings
             tenant.ClientId,
             tenant.SecretReference,
             tenant.IsActive,
+            tenant.IsB2C,
             tenant.CreatedAtUtc,
             tenant.UpdatedAtUtc);
 

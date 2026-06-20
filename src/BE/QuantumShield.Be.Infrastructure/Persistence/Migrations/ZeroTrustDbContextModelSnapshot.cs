@@ -68,6 +68,9 @@ namespace QuantumShield.Be.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsB2C")
+                        .HasColumnType("bit");
+
                     b.Property<string>("SecretReference")
                         .IsRequired()
                         .HasMaxLength(500)

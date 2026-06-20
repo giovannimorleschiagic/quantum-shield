@@ -13,6 +13,7 @@ internal static class DomainMapper
             entity.ClientId,
             entity.SecretReference,
             entity.IsActive,
+            entity.IsB2C,
             entity.CreatedAtUtc,
             entity.UpdatedAtUtc);
 
@@ -25,6 +26,7 @@ internal static class DomainMapper
             ClientId = domain.ClientId,
             SecretReference = domain.SecretReference,
             IsActive = domain.IsActive,
+            IsB2C = domain.IsB2C,
             CreatedAtUtc = domain.CreatedAtUtc,
             UpdatedAtUtc = domain.UpdatedAtUtc
         };

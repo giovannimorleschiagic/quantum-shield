@@ -17,6 +17,7 @@
       "endpoint": "GET /users?$filter=assignedLicenses/$count ne 0&$select=id,displayName,assignedLicenses,userPrincipalName",
       "result": null,
       "check_id": "C1",
+      "b2c_supported": false,
       "expected_result": "assignedLicenses = [] per tutti gli account admin",
       "description": "Account con ruoli privilegiati non devono avere product license assegnate",
       "status": "not_run"

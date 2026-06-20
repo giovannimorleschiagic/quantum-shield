@@ -14,6 +14,7 @@ public interface ITenantService
         string clientId,
         string clientSecret,
         bool isActive,
+        bool isB2C,
         CancellationToken cancellationToken);
 
     Task<Tenant?> UpdateAsync(
@@ -23,5 +24,6 @@ public interface ITenantService
         string clientId,
         string clientSecret,
         bool isActive,
+        bool isB2C,
         CancellationToken cancellationToken);
 }

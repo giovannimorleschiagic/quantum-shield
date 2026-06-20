@@ -39,7 +39,8 @@ public sealed class FileSystemTemplateCatalogProvider : ITemplateCatalogProvider
                         check.Method,
                         check.Endpoint,
                         check.GraphPermissions ?? [],
-                        check.ExpectedResult))
+                        check.ExpectedResult,
+                        check.IsSupportedForB2C ?? true))
                     .ToList()));
         }
 
@@ -83,5 +84,6 @@ public sealed class FileSystemTemplateCatalogProvider : ITemplateCatalogProvider
         string Method,
         string? Endpoint,
         [property: JsonPropertyName("expected_result")] string ExpectedResult,
-        [property: JsonPropertyName("graph_permissions")] List<string>? GraphPermissions);
+        [property: JsonPropertyName("graph_permissions")] List<string>? GraphPermissions,
+        [property: JsonPropertyName("b2c_supported")] bool? IsSupportedForB2C);
 }

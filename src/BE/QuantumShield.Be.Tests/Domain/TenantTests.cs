@@ -13,4 +13,12 @@ public sealed class TenantTests
         var exception = Assert.Throws<DomainValidationException>(action);
         Assert.Equal("Tenant id must be a valid GUID.", exception.Message);
     }
+
+    [Fact]
+    public void Create_ShouldPersistB2CFlag()
+    {
+        var tenant = Tenant.Create("Contoso", Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), "secret-ref", true, true);
+
+        Assert.True(tenant.IsB2C);
+    }
 }

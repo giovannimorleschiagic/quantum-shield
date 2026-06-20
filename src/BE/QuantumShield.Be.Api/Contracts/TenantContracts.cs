@@ -5,14 +5,16 @@ public sealed record CreateTenantRequest(
     string TenantId,
     string ClientId,
     string ClientSecret,
-    bool IsActive);
+    bool IsActive,
+    bool IsB2C);
 
 public sealed record UpdateTenantRequest(
     string TenantName,
     string TenantId,
     string ClientId,
     string ClientSecret,
-    bool IsActive);
+    bool IsActive,
+    bool IsB2C);
 
 public sealed record TenantResponse(
     Guid Id,
@@ -21,5 +23,6 @@ public sealed record TenantResponse(
     string ClientId,
     string SecretReference,
     bool IsActive,
+    bool IsB2C,
     DateTimeOffset CreatedAtUtc,
     DateTimeOffset UpdatedAtUtc);

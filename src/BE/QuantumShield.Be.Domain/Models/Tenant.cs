@@ -8,7 +8,7 @@ public sealed class Tenant
     {
     }
 
-    private Tenant(Guid id, string tenantName, string tenantId, string clientId, string secretReference, bool isActive)
+    private Tenant(Guid id, string tenantName, string tenantId, string clientId, string secretReference, bool isActive, bool isB2C)
     {
         Id = id;
         TenantName = tenantName;
@@ -16,6 +16,7 @@ public sealed class Tenant
         ClientId = clientId;
         SecretReference = secretReference;
         IsActive = isActive;
+        IsB2C = isB2C;
         CreatedAtUtc = DateTimeOffset.UtcNow;
         UpdatedAtUtc = CreatedAtUtc;
     }
@@ -32,6 +33,8 @@ public sealed class Tenant
 
     public bool IsActive { get; private set; }
 
+    public bool IsB2C { get; private set; }
+
     public DateTimeOffset CreatedAtUtc { get; private set; }
 
     public DateTimeOffset UpdatedAtUtc { get; private set; }
@@ -43,30 +46,31 @@ public sealed class Tenant
         string clientId,
         string secretReference,
         bool isActive,
+        bool isB2C,
         DateTimeOffset createdAtUtc,
         DateTimeOffset updatedAtUtc)
     {
         Validate(tenantName, tenantId, clientId, secretReference);
 
-        return new Tenant(id, tenantName.Trim(), tenantId.Trim(), clientId.Trim(), secretReference.Trim(), isActive)
+        return new Tenant(id, tenantName.Trim(), tenantId.Trim(), clientId.Trim(), secretReference.Trim(), isActive, isB2C)
         {
             CreatedAtUtc = createdAtUtc,
             UpdatedAtUtc = updatedAtUtc
         };
     }
 
-    public static Tenant Create(Guid id, string tenantName, string tenantId, string clientId, string secretReference, bool isActive = true)
+    public static Tenant Create(Guid id, string tenantName, string tenantId, string clientId, string secretReference, bool isActive = true, bool isB2C = false)
     {
         Validate(tenantName, tenantId, clientId, secretReference);
-        return new Tenant(id, tenantName.Trim(), tenantId.Trim(), clientId.Trim(), secretReference.Trim(), isActive);
+        return new Tenant(id, tenantName.Trim(), tenantId.Trim(), clientId.Trim(), secretReference.Trim(), isActive, isB2C);
     }
 
-    public static Tenant Create(string tenantName, string tenantId, string clientId, string secretReference, bool isActive = true)
+    public static Tenant Create(string tenantName, string tenantId, string clientId, string secretReference, bool isActive = true, bool isB2C = false)
     {
-        return Create(Guid.NewGuid(), tenantName, tenantId, clientId, secretReference, isActive);
+        return Create(Guid.NewGuid(), tenantName, tenantId, clientId, secretReference, isActive, isB2C);
     }
 
-    public void Update(string tenantName, string tenantId, string clientId, string secretReference, bool isActive)
+    public void Update(string tenantName, string tenantId, string clientId, string secretReference, bool isActive, bool isB2C)
     {
         Validate(tenantName, tenantId, clientId, secretReference);
 
@@ -75,6 +79,7 @@ public sealed class Tenant
         ClientId = clientId.Trim();
         SecretReference = secretReference.Trim();
         IsActive = isActive;
+        IsB2C = isB2C;
         UpdatedAtUtc = DateTimeOffset.UtcNow;
     }
 

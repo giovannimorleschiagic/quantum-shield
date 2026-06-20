@@ -20,6 +20,7 @@
       "method": "graph_api",
       "result": null,
       "status": "not_run",
+      "b2c_supported": false,
       "expected_result": "Tutti i gruppi pubblici sono approvati dall'organizzazione",
       "check_id": "C1",
       "description": "Elencare tutti i Microsoft 365 Groups con visibility Public"

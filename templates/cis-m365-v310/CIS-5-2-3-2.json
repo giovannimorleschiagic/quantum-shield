@@ -24,6 +24,7 @@
     {
       "expected_result": "onPremisesSyncEnabled = true; se false = cloud-only, controllo N/A",
       "method": "graph_api",
+      "b2c_supported": false,
       "description": "Verificare se l'ambiente è ibrido (prerequisito per questo controllo)",
       "check_id": "C1",
       "graph_permissions": [
@@ -36,6 +37,7 @@
     {
       "status": "not_run",
       "method": "graph_api",
+      "b2c_supported": false,
       "graph_permissions": [
         "Policy.Read.All"
       ],

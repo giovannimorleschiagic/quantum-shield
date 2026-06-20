@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuantumShield.Be.Infrastructure.Persistence;
 
 #nullable disable
@@ -12,10 +11,9 @@ using QuantumShield.Be.Infrastructure.Persistence;
 namespace QuantumShield.Be.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ZeroTrustDbContext))]
-    [Migration("20260620103231_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260620190000_AddTenantB2CFlag")]
+    partial class AddTenantB2CFlag
     {
-        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
@@ -24,50 +22,6 @@ namespace QuantumShield.Be.Infrastructure.Persistence.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("QuantumShield.Be.Infrastructure.Persistence.Entities.EvaluationResultEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ActualValue")
-                        .HasMaxLength(4000)
-                        .HasColumnType("nvarchar(4000)");
-
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<Guid>("EvaluationRunId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ExpectedValue")
-                        .HasMaxLength(4000)
-                        .HasColumnType("nvarchar(4000)");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(4000)
-                        .HasColumnType("nvarchar(4000)");
-
-                    b.Property<string>("RuleKey")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int>("Severity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EvaluationRunId");
-
-                    b.ToTable("EvaluationResults", (string)null);
-                });
 
             modelBuilder.Entity("QuantumShield.Be.Infrastructure.Persistence.Entities.EvaluationRunEntity", b =>
                 {
@@ -78,18 +32,9 @@ namespace QuantumShield.Be.Infrastructure.Persistence.Migrations
                     b.Property<DateTimeOffset?>("CompletedAtUtc")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("ErrorMessage")
-                        .HasMaxLength(4000)
-                        .HasColumnType("nvarchar(4000)");
-
-                    b.Property<int>("FailedChecks")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NotApplicableChecks")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PassedChecks")
-                        .HasColumnType("int");
+                    b.Property<string>("ResultBlobName")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<DateTimeOffset>("StartedAtUtc")
                         .HasColumnType("datetimeoffset");
@@ -97,20 +42,8 @@ namespace QuantumShield.Be.Infrastructure.Persistence.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<string>("TemplateIdentifier")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("TemplateVersion")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("TotalChecks")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -162,17 +95,6 @@ namespace QuantumShield.Be.Infrastructure.Persistence.Migrations
                     b.ToTable("Tenants", (string)null);
                 });
 
-            modelBuilder.Entity("QuantumShield.Be.Infrastructure.Persistence.Entities.EvaluationResultEntity", b =>
-                {
-                    b.HasOne("QuantumShield.Be.Infrastructure.Persistence.Entities.EvaluationRunEntity", "Run")
-                        .WithMany("Results")
-                        .HasForeignKey("EvaluationRunId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Run");
-                });
-
             modelBuilder.Entity("QuantumShield.Be.Infrastructure.Persistence.Entities.EvaluationRunEntity", b =>
                 {
                     b.HasOne("QuantumShield.Be.Infrastructure.Persistence.Entities.TenantEntity", "Tenant")
@@ -182,11 +104,6 @@ namespace QuantumShield.Be.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Tenant");
-                });
-
-            modelBuilder.Entity("QuantumShield.Be.Infrastructure.Persistence.Entities.EvaluationRunEntity", b =>
-                {
-                    b.Navigation("Results");
                 });
 #pragma warning restore 612, 618
         }

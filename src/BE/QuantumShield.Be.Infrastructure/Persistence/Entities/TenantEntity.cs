@@ -14,6 +14,8 @@ public sealed class TenantEntity
 
     public bool IsActive { get; set; }
 
+    public bool IsB2C { get; set; }
+
     public DateTimeOffset CreatedAtUtc { get; set; }
 
     public DateTimeOffset UpdatedAtUtc { get; set; }

@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using System.Web;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Azure.Identity;
@@ -56,7 +57,7 @@ public sealed partial class CatalogEvaluationRunner : ICatalogEvaluationRunner
             var checks = new List<EvaluationCheckResult>(automaticChecks.Count);
             foreach (var check in automaticChecks)
             {
-                checks.Add(await ExecuteCheckAsync(httpClient, template, check, cancellationToken));
+                checks.Add(await ExecuteCheckAsync(httpClient, tenant, template, check, cancellationToken));
             }
 
             templateResults.Add(new EvaluationArtifactTemplateResult(
@@ -89,10 +90,16 @@ public sealed partial class CatalogEvaluationRunner : ICatalogEvaluationRunner
 
     private static async Task<EvaluationCheckResult> ExecuteCheckAsync(
         HttpClient httpClient,
+        Tenant tenant,
         EvaluationTemplateDefinition template,
         EvaluationCheckDefinition check,
         CancellationToken cancellationToken)
     {
+        if (tenant.IsB2C && !check.IsSupportedForB2C)
+        {
+            return ToNotApplicable(template, check, "The template check isn't supported for Azure AD B2C tenants.");
+        }
+
         var requestUris = ExtractRequestUris(check.Endpoint);
         if (requestUris.Count == 0)
         {
@@ -102,7 +109,10 @@ public sealed partial class CatalogEvaluationRunner : ICatalogEvaluationRunner
         var payloads = new List<string>(requestUris.Count);
         foreach (var requestUri in requestUris)
         {
-            using var response = await httpClient.GetAsync(requestUri, cancellationToken);
+            using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+            ApplyAdvancedQueryRequirements(request, requestUri);
+
+            using var response = await httpClient.SendAsync(request, cancellationToken);
             var rawContent = await response.Content.ReadAsStringAsync(cancellationToken);
             payloads.Add(rawContent);
 
@@ -263,6 +273,40 @@ public sealed partial class CatalogEvaluationRunner : ICatalogEvaluationRunner
         normalized = normalized.Replace(" ", "%20", StringComparison.Ordinal)
             .Replace("'", "%27", StringComparison.Ordinal);
         return normalized;
+    }
+
+    private static void ApplyAdvancedQueryRequirements(HttpRequestMessage request, string requestUri)
+    {
+        if (!RequiresAdvancedQueryParameters(requestUri))
+        {
+            return;
+        }
+
+        request.Headers.TryAddWithoutValidation("ConsistencyLevel", "eventual");
+
+        var uriBuilder = new UriBuilder(new Uri(new Uri("https://graph.microsoft.com/v1.0/"), requestUri));
+        var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+        if (string.IsNullOrWhiteSpace(query["$count"]))
+        {
+            query["$count"] = "true";
+        }
+
+        uriBuilder.Query = query.ToString() ?? string.Empty;
+        request.RequestUri = new Uri(uriBuilder.Uri.PathAndQuery, UriKind.Relative);
+    }
+
+    private static bool RequiresAdvancedQueryParameters(string requestUri)
+    {
+        if (!requestUri.Contains('?', StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        return requestUri.Contains("$count", StringComparison.OrdinalIgnoreCase)
+            || requestUri.Contains(" ne ", StringComparison.OrdinalIgnoreCase)
+            || requestUri.Contains(" not ", StringComparison.OrdinalIgnoreCase)
+            || requestUri.Contains(" endsWith(", StringComparison.OrdinalIgnoreCase)
+            || requestUri.Contains("/$count", StringComparison.OrdinalIgnoreCase);
     }
 
     private static EvaluationCheckResult ToNotApplicable(

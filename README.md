@@ -143,7 +143,7 @@ La cartella `templates/cis-m365-v310/` contiene **41 template JSON** che coprono
 - **1.x** — Account / Authentication (MFA, admin account, Entra ID settings)
 - **5.x** — Email / Exchange Online
 
-Ogni template definisce uno o più `checks` con metodo di verifica (`graph_api`, `exchange_powershell`, `manual`), i permessi Graph necessari, il risultato atteso e le istruzioni di remediation.
+Ogni template JSON include per ogni check il campo `b2c_supported` (bool). Se `false`, il check viene saltato con esito `NotApplicable` per i tenant Azure AD B2C.
 
 Permessi Microsoft Graph richiesti (tutti **read-only**, tipo Application):
 `User.Read.All` · `Directory.Read.All` · `AuditLog.Read.All` · `Policy.Read.All` · `RoleManagement.Read.All` · e altri 8 permessi.

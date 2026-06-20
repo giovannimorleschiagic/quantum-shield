@@ -1,0 +1,8 @@
+prefix               = "quantumshield-dev"
+location             = "westeurope"
+app_service_sku_name = "B1"
+
+tags = {
+  environment = "dev"
+  owner       = "platform-team"
+}

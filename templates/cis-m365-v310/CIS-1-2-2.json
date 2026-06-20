@@ -16,7 +16,7 @@
       "graph_permissions": [
         "User.Read.All"
       ],
-      "endpoint": "GET /users?$filter=accountEnabled eq true&$select=id,displayName,userPrincipalName,accountEnabled - filtrare poi per RecipientTypeDetails=SharedMailbox via Exchange",
+      "endpoint": "GET /users?$filter=accountEnabled eq true&$select=id,displayName,userPrincipalName,accountEnabled,mail",
       "method": "graph_api",
       "result": null,
       "status": "not_run",

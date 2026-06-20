@@ -2,40 +2,63 @@ export type EvaluationRunStatus = "Pending" | "InProgress" | "Completed" | "Fail
 
 export type EvaluationCheckStatus = "Passed" | "Failed" | "NotApplicable";
 
-export type EvaluationSeverity = "Low" | "Medium" | "High" | "Critical";
-
 // Requests
 
 export interface TriggerEvaluationRunRequest {
   tenantId: string;
-  templateIdentifier: string | null;
 }
 
 // Responses
 
-export interface EvaluationResultResponse {
-  id: string;
-  ruleKey: string;
-  displayName: string;
-  status: EvaluationCheckStatus;
-  severity: EvaluationSeverity;
-  expectedValue: string | null;
-  actualValue: string | null;
-  notes: string | null;
-}
-
-export interface EvaluationRunResponse {
+export interface EvaluationRunSummaryResponse {
   id: string;
   tenantId: string;
   status: EvaluationRunStatus;
-  templateIdentifier: string;
-  templateVersion: string | null;
+  resultBlobName: string | null;
+  startedAtUtc: string;
+  completedAtUtc: string | null;
+}
+
+export interface EvaluationArtifactSummaryResponse {
   totalChecks: number;
   passedChecks: number;
   failedChecks: number;
   notApplicableChecks: number;
-  errorMessage: string | null;
+  templatesProcessed: number;
+  templatesSkipped: number;
+}
+
+export interface EvaluationCheckResultResponse {
+  controlId: string;
+  checkId: string;
+  title: string;
+  description: string;
+  method: string;
+  endpoint: string;
+  graphPermissions: string[];
+  expectedResult: string;
+  status: EvaluationCheckStatus;
+  actualResult: string | null;
+  rawResult: string | null;
+  notes: string | null;
+}
+
+export interface EvaluationTemplateResultResponse {
+  controlId: string;
+  benchmark: string;
+  version: string | null;
+  section: string;
+  title: string;
+  checks: EvaluationCheckResultResponse[];
+}
+
+export interface EvaluationRunDetailResponse {
+  id: string;
+  tenantId: string;
+  status: EvaluationRunStatus;
+  resultBlobName: string | null;
   startedAtUtc: string;
   completedAtUtc: string | null;
-  results: EvaluationResultResponse[];
+  summary: EvaluationArtifactSummaryResponse | null;
+  templates: EvaluationTemplateResultResponse[];
 }

@@ -25,10 +25,10 @@
         "User.Read.All"
       ],
       "method": "graph_api",
-      "endpoint": "GET /users/{id}?$select=onPremisesSyncEnabled,assignedLicenses",
+      "endpoint": "GET /users?$filter=onPremisesSyncEnabled eq true&$count=true&$select=id,displayName,userPrincipalName,onPremisesSyncEnabled,assignedLicenses",
       "result": null,
       "check_id": "C2",
-      "expected_result": "onPremisesSyncEnabled = null, assignedLicenses = []",
+      "expected_result": "Gli account break-glass (Global Admin senza licenza) NON devono comparire qui (onPremisesSyncEnabled=true)",
       "description": "Gli account break-glass sono cloud-only e non sincronizzati",
       "status": "not_run"
     },
@@ -45,14 +45,18 @@
       "status": "not_run"
     },
     {
-      "graph_permissions": [],
-      "method": "manual",
+      "graph_permissions": [
+        "SecurityAlert.Read.All"
+      ],
+      "method": "manual_admin_center",
       "endpoint": null,
       "result": null,
       "check_id": "C4",
-      "expected_result": "Alert attivo in Microsoft Sentinel o Microsoft 365 Defender per accessi break-glass",
+      "expected_result": "Esiste almeno un alert attivo che monitora l'uso degli account break-glass. In alternativa verificare in Microsoft Sentinel.",
       "description": "Esiste un alert di monitoraggio su ogni sign-in degli account break-glass",
-      "status": "not_run"
+      "status": "not_run",
+      "portal_path": "Microsoft Entra admin center > Monitoring & health > Diagnostic settings (export SignInLogs) + Azure Monitor / Microsoft Sentinel > Alert rules (regola su sign-in degli account break-glass)",
+      "api_note": "Le regole di alert sui sign-in (Azure Monitor / Microsoft Sentinel, Log Analytics) non sono esposte in Microsoft Graph. /security/alerts_v2 elenca solo alert gia' scattati, non la configurazione della regola. Verifica manuale obbligatoria."
     }
   ],
   "title": "Ensure two emergency access accounts have been defined",

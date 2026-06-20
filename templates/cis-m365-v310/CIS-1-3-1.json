@@ -17,11 +17,11 @@
       "graph_permissions": [
         "Domain.Read.All"
       ],
-      "endpoint": "GET /domains/{domain-id}?$select=passwordNotificationWindowInDays,passwordValidityPeriodInDays",
+      "endpoint": "GET /domains?$select=id,isDefault,passwordValidityPeriodInDays,passwordNotificationWindowInDays",
       "method": "graph_api",
       "result": null,
       "status": "not_run",
-      "expected_result": "passwordValidityPeriodInDays = 2147483647 (never expire)",
+      "expected_result": "passwordValidityPeriodInDays = 2147483647 per tutti i domini",
       "check_id": "C1",
       "description": "Verificare che la password expiration policy sia impostata su 'never expire' per il dominio"
     }

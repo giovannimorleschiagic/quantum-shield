@@ -20,52 +20,56 @@
       "check_id": "C1",
       "license_required": "Microsoft Entra ID P2",
       "description": "Verificare che esista almeno un Access Review attivo per guest users",
-      "endpoint": "GET /identityGovernance/accessReviews/definitions?$filter=contains(scope/query,'/guests') or contains(scope/query,'userType eq''Guest''')",
+      "endpoint": "GET /identityGovernance/accessReviews/definitions?$top=100",
       "result": null,
       "expected_result": "Almeno un Access Review definition attivo per guest users",
       "graph_permissions": [
         "AccessReview.Read.All"
       ],
-      "method": "graph_api"
+      "method": "graph_api",
+      "api_version": "beta"
     },
     {
       "status": "not_run",
       "check_id": "C2",
       "license_required": "Microsoft Entra ID P2",
       "description": "Verificare che l'Access Review sia ricorrente (almeno quarterly)",
-      "endpoint": "GET /identityGovernance/accessReviews/definitions/{id}",
+      "endpoint": "GET /identityGovernance/accessReviews/definitions?$select=id,displayName,reviewers,settings,scope",
       "result": null,
-      "expected_result": "recurrence.pattern.type = 'weekly' o 'absoluteMonthly' con interval <= 3",
+      "expected_result": "recurrence.pattern.interval <= 14 giorni per definizioni con scope guest",
       "graph_permissions": [
         "AccessReview.Read.All"
       ],
-      "method": "graph_api"
+      "method": "graph_api",
+      "api_version": "beta"
     },
     {
       "status": "not_run",
       "check_id": "C3",
       "license_required": "Microsoft Entra ID P2",
       "description": "Verificare che il reviewer non sia il guest stesso (self-review)",
-      "endpoint": "GET /identityGovernance/accessReviews/definitions/{id}?$select=reviewers",
+      "endpoint": "GET /identityGovernance/accessReviews/definitions?$select=id,displayName,reviewers,scope",
       "result": null,
-      "expected_result": "reviewers non contiene solo 'self' come tipo",
+      "expected_result": "reviewers[].query non contiene solo '/me' (self-review vietato per guest)",
       "graph_permissions": [
         "AccessReview.Read.All"
       ],
-      "method": "graph_api"
+      "method": "graph_api",
+      "api_version": "beta"
     },
     {
       "status": "not_run",
       "check_id": "C4",
       "license_required": "Microsoft Entra ID P2",
       "description": "Verificare che l'azione in caso di mancata risposta del reviewer sia 'Deny'",
-      "endpoint": "GET /identityGovernance/accessReviews/definitions/{id}?$select=settings",
+      "endpoint": "GET /identityGovernance/accessReviews/definitions?$select=id,displayName,settings,scope",
       "result": null,
       "expected_result": "settings.defaultDecision = 'Deny' e settings.autoApplyDecisionsEnabled = true",
       "graph_permissions": [
         "AccessReview.Read.All"
       ],
-      "method": "graph_api"
+      "method": "graph_api",
+      "api_version": "beta"
     }
   ],
   "version": "3.1.0",

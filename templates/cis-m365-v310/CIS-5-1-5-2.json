@@ -18,7 +18,7 @@
     {
       "result": null,
       "expected_result": "permissionGrantPolicyIdsAssignedToDefaultUserRole = [] o non contiene 'microsoft-user-default-legacy'",
-      "endpoint": "GET /policies/authorizationPolicy?$select=permissionGrantPolicyIdsAssignedToDefaultUserRole",
+      "endpoint": "GET /policies/authorizationPolicy?$select=defaultUserRolePermissions",
       "graph_permissions": [
         "Policy.Read.All"
       ],

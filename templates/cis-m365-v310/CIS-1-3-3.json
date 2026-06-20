@@ -14,13 +14,15 @@
   ],
   "checks": [
     {
-      "expected_result": "La sharing policy predefinita non include domini esterni o FreeBusySimple/FreeBusyDetail per external",
       "check_id": "C1",
-      "status": "not_run",
-      "result": null,
-      "cmdlet": "Get-SharingPolicy | Where-Object {$_.Default -eq $true}",
       "description": "Verificare che la condivisione esterna del calendario sia disabilitata",
-      "method": "exchange_powershell"
+      "method": "exchange_powershell",
+      "cmdlet": "Get-SharingPolicy | Select-Object Name,Domains,Enabled",
+      "graph_permissions": [],
+      "expected_result": "Nessuna SharingPolicy abilitata deve includere domini esterni con CalendarSharing",
+      "api_note": "NOTA: Nessuna Graph API disponibile per Exchange sharing policy. Usare Exchange Online PowerShell.",
+      "status": "not_run",
+      "result": null
     }
   ],
   "section": "1 - Microsoft 365 Administration",

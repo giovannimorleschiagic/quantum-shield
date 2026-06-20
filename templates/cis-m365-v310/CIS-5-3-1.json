@@ -20,7 +20,7 @@
       "check_id": "C1",
       "license_required": "Microsoft Entra ID P2",
       "description": "Verificare che non esistano assegnazioni dirette permanenti per ruoli privilegiati (devono essere gestite da PIM come 'eligible')",
-      "endpoint": "GET /roleManagement/directory/roleAssignments?$filter=roleDefinitionId eq '{privileged-role-id}'&$expand=principal",
+      "endpoint": "GET /roleManagement/directory/roleAssignments?$select=id,principalId,roleDefinitionId,directoryScopeId",
       "result": null,
       "expected_result": "Le assegnazioni privilegiate sono di tipo 'eligible' in PIM, non 'active permanent'",
       "graph_permissions": [
@@ -34,7 +34,7 @@
       "check_id": "C2",
       "license_required": "Microsoft Entra ID P2",
       "description": "Verificare che le role settings PIM richiedano justification per l'attivazione",
-      "endpoint": "GET /policies/roleManagementPolicies?$filter=scopeType eq 'DirectoryRole'",
+      "endpoint": "GET /policies/roleManagementPolicies?$filter=scopeId eq '/' and scopeType eq 'Directory'",
       "result": null,
       "expected_result": "isExpirationRequired = true, requireJustification = true per ruoli privilegiati",
       "graph_permissions": [
@@ -47,9 +47,9 @@
       "check_id": "C3",
       "license_required": "Microsoft Entra ID P2",
       "description": "Verificare che l'approvazione sia richiesta per attivazione di Global Administrator e ruoli critici",
-      "endpoint": "GET /policies/roleManagementPolicies/{id}/rules",
+      "endpoint": "GET /policies/roleManagementPolicies?$filter=scopeId eq '/' and scopeType eq 'Directory'&$expand=rules",
       "result": null,
-      "expected_result": "ApprovalSettings.isApprovalRequired = true per ruoli critici (Global Admin, Privileged Role Admin, ecc.)",
+      "expected_result": "Per Global Admin e ruoli critici: ApprovalSettings.isApprovalRequired = true nelle rules",
       "graph_permissions": [
         "RoleManagement.Read.Directory"
       ],

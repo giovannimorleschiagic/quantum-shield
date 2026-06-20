@@ -7,4 +7,11 @@ const axiosInstance = axios.create({
   },
 });
 
+if (process.env.REACT_APP_MOCK_API === "true") {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { mockAdapter } = require("../mocks/mockAdapter");
+  axiosInstance.defaults.adapter = mockAdapter;
+  console.info("[MockAPI] Attivo — tutte le chiamate HTTP sono simulate.");
+}
+
 export default axiosInstance;

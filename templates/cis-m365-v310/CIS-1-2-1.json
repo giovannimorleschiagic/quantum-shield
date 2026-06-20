@@ -16,7 +16,7 @@
       "graph_permissions": [
         "Group.Read.All"
       ],
-      "endpoint": "GET /groups?$filter=visibility eq 'Public' and groupTypes/any(c:c eq 'Unified')&$select=id,displayName,visibility,mail,createdDateTime",
+      "endpoint": "GET /groups?$filter=groupTypes/any(c:c eq 'Unified')&$count=true&$select=id,displayName,visibility,mail,createdDateTime",
       "method": "graph_api",
       "result": null,
       "status": "not_run",

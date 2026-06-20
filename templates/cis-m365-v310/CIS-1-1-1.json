@@ -14,7 +14,7 @@
         "Directory.Read.All"
       ],
       "method": "graph_api",
-      "endpoint": "GET /users?$filter=assignedLicenses/$count ne 0&$select=id,displayName,assignedLicenses,userPrincipalName",
+      "endpoint": "GET /users?$select=id,displayName,userPrincipalName,assignedLicenses",
       "result": null,
       "check_id": "C1",
       "expected_result": "assignedLicenses = [] per tutti gli account admin",
@@ -26,20 +26,22 @@
         "User.Read.All"
       ],
       "method": "graph_api",
-      "endpoint": "GET /users/{id}?$select=id,displayName,onPremisesSyncEnabled,onPremisesDistinguishedName",
+      "endpoint": "GET /users?$filter=onPremisesSyncEnabled eq true&$count=true&$select=id,displayName,userPrincipalName,onPremisesSyncEnabled",
       "result": null,
       "check_id": "C2",
-      "expected_result": "onPremisesSyncEnabled = null o false",
+      "expected_result": "Nessun account admin deve apparire in questa lista (onPremisesSyncEnabled=true). Cross-reference con ruoli privilegiati da C1.",
       "description": "Account admin devono essere cloud-only, non sincronizzati da AD on-prem",
       "status": "not_run"
     },
     {
-      "graph_permissions": [],
-      "method": "manual",
-      "endpoint": null,
+      "graph_permissions": [
+        "RoleManagement.Read.Directory"
+      ],
+      "method": "graph_api",
+      "endpoint": "GET /roleManagement/directory/roleAssignments?$expand=principal&$select=id,principalId,roleDefinitionId",
       "result": null,
       "check_id": "C3",
-      "expected_result": "UPN contiene prefisso dedicato tipo 'adm-' o '-admin'",
+      "expected_result": "Verificare che i principalId restituiti abbiano userPrincipalName con prefisso dedicato (es. adm-, -admin)",
       "description": "Verificare che gli account admin abbiano UPN dedicato (es. adm-user@domain.com)",
       "status": "not_run"
     }

@@ -31,12 +31,12 @@
       ],
       "result": null,
       "license_required": "Microsoft Entra ID P1",
-      "expected_result": "sessionControls.persistentBrowser.mode = 'never'",
+      "expected_result": "Policy con sessionControls.persistentBrowser.mode='never' applicata agli admin",
       "description": "Verificare policy CA con Persistent browser session = Never persistent per admin",
       "check_id": "C2",
       "status": "not_run",
       "method": "graph_api",
-      "endpoint": "GET /identity/conditionalAccess/policies/{id}"
+      "endpoint": "GET /identity/conditionalAccess/policies?$select=id,displayName,state,sessionControls,conditions"
     }
   ],
   "remediation": {

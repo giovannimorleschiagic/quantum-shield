@@ -13,7 +13,7 @@
         "RoleManagement.Read.Directory"
       ],
       "method": "graph_api",
-      "endpoint": "GET /directoryRoles/roleTemplateId=62e90394-69f5-4237-9190-012177145e10/members/$count",
+      "endpoint": "GET /roleManagement/directory/roleAssignments?$filter=roleDefinitionId eq '62e90394-69f5-4237-9190-012177145e10'&$expand=principal",
       "result": null,
       "check_id": "C1",
       "expected_result": "Tra 2 e 4 Global Admin",

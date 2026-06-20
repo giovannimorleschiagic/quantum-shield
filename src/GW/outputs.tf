@@ -22,3 +22,64 @@ output "backend_web_app_hostname" {
   description = "Default hostname of the App Service backend."
   value       = azurerm_linux_web_app.backend.default_hostname
 }
+
+output "static_content_app_name" {
+  description = "Name of the static-content App Service Web App."
+  value       = azurerm_linux_web_app.static_content.name
+}
+
+output "static_content_app_hostname" {
+  description = "Default hostname of the static-content App Service Web App."
+  value       = azurerm_linux_web_app.static_content.default_hostname
+}
+
+output "application_insights_name" {
+  description = "Name of Azure Application Insights resource."
+  value       = azurerm_application_insights.this.name
+}
+
+output "application_insights_connection_string" {
+  description = "Connection string for Azure Application Insights."
+  value       = azurerm_application_insights.this.connection_string
+  sensitive   = true
+}
+
+output "key_vault_sql_connection_secret_name" {
+  description = "Key Vault secret name containing SQL connection string."
+  value       = azurerm_key_vault_secret.sql_connection_string.name
+}
+
+output "key_vault_blob_connection_secret_name" {
+  description = "Key Vault secret name containing Blob Storage connection string."
+  value       = azurerm_key_vault_secret.blob_connection_string.name
+}
+
+output "key_vault_name" {
+  description = "Name of the Azure Key Vault."
+  value       = azurerm_key_vault.this.name
+}
+
+output "key_vault_uri" {
+  description = "URI of the Azure Key Vault."
+  value       = azurerm_key_vault.this.vault_uri
+}
+
+output "sql_server_fqdn" {
+  description = "Fully qualified domain name of the Azure SQL Server."
+  value       = azurerm_mssql_server.this.fully_qualified_domain_name
+}
+
+output "sql_database_name" {
+  description = "Name of the Azure SQL Database."
+  value       = azurerm_mssql_database.this.name
+}
+
+output "storage_account_name" {
+  description = "Name of the Blob Storage account."
+  value       = azurerm_storage_account.this.name
+}
+
+output "blob_container_name" {
+  description = "Name of the blob container."
+  value       = azurerm_storage_container.blob.name
+}

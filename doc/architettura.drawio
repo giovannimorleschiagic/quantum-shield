@@ -1,0 +1,52 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="Page-1" id="ZQA47nM7okTqdBMHBcq3">
+    <mxGraphModel dx="1122" dy="810" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="lsOKkgJRo9uCEtJnDNIA-16" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;dashed=1;" value="" vertex="1">
+          <mxGeometry height="409" width="120" x="438" y="191" as="geometry" />
+        </mxCell>
+        <mxCell id="lsOKkgJRo9uCEtJnDNIA-11" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;dashed=1;" value="" vertex="1">
+          <mxGeometry height="500" width="510" x="100" y="147.5" as="geometry" />
+        </mxCell>
+        <mxCell id="lsOKkgJRo9uCEtJnDNIA-13" edge="1" parent="1" source="lsOKkgJRo9uCEtJnDNIA-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="lsOKkgJRo9uCEtJnDNIA-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lsOKkgJRo9uCEtJnDNIA-2" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/app_services/App_Service_Domains.svg;" value="frontend" vertex="1">
+          <mxGeometry height="55.00000000000001" width="68" x="140" y="379.5" as="geometry" />
+        </mxCell>
+        <mxCell id="lsOKkgJRo9uCEtJnDNIA-14" edge="1" parent="1" source="lsOKkgJRo9uCEtJnDNIA-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="lsOKkgJRo9uCEtJnDNIA-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lsOKkgJRo9uCEtJnDNIA-15" edge="1" parent="1" source="lsOKkgJRo9uCEtJnDNIA-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="lsOKkgJRo9uCEtJnDNIA-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lsOKkgJRo9uCEtJnDNIA-3" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/app_services/App_Services.svg;" value="API BE" vertex="1">
+          <mxGeometry height="68" width="68" x="300" y="373" as="geometry" />
+        </mxCell>
+        <mxCell id="lsOKkgJRo9uCEtJnDNIA-4" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/app_services/App_Service_Plans.svg;" value="app service" vertex="1">
+          <mxGeometry height="68" width="68" x="474" y="243" as="geometry" />
+        </mxCell>
+        <mxCell id="lsOKkgJRo9uCEtJnDNIA-5" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/security/Key_Vaults.svg;" value="key vault" vertex="1">
+          <mxGeometry height="68" width="68" x="464" y="366.5" as="geometry" />
+        </mxCell>
+        <mxCell id="lsOKkgJRo9uCEtJnDNIA-6" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/databases/SQL_Database.svg;" value="database" vertex="1">
+          <mxGeometry height="64" width="48" x="310" y="502" as="geometry" />
+        </mxCell>
+        <mxCell id="lsOKkgJRo9uCEtJnDNIA-7" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/storage/Storage_Accounts.svg;" value="blob storage" vertex="1">
+          <mxGeometry height="52" width="65" x="301.5" y="251" as="geometry" />
+        </mxCell>
+        <mxCell id="lsOKkgJRo9uCEtJnDNIA-8" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/devops/Application_Insights.svg;" value="app insight" vertex="1">
+          <mxGeometry height="63" width="44" x="476" y="487" as="geometry" />
+        </mxCell>
+        <mxCell id="lsOKkgJRo9uCEtJnDNIA-10" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/networking/Application_Gateways.svg;" value="" vertex="1">
+          <mxGeometry height="80" width="80" x="60" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="lsOKkgJRo9uCEtJnDNIA-17" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="shared resources" vertex="1">
+          <mxGeometry height="30" width="90" x="450" y="160" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

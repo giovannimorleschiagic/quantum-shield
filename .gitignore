@@ -55,6 +55,9 @@ vite.config.*.timestamp-*
 
 # Terraform local working directory
 **/.terraform/
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
 
 # Temporary files
 tmp/
@@ -62,3 +65,5 @@ temp/
 *.tmp
 *.bak
 *.swp
+
+

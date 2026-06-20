@@ -1,0 +1,164 @@
+{
+  "check_complexity": "complex",
+  "api_version": "beta",
+  "section": "5.2 - Conditional Access Validation",
+  "benchmark": "CIS Microsoft 365 Foundations Benchmark",
+  "license_requirement": {
+    "entra_id_tier": "P1",
+    "license_supported": true,
+    "minimum_license": "Microsoft Entra ID P1 o P2",
+    "license_gate_message": "Richiede Microsoft Entra ID P1 per Conditional Access. Senza P1 le policy CA non esistono e il What-If è N/A."
+  },
+  "checks": [
+    {
+      "result": null,
+      "request_body": {
+        "conditionalAccessWhatIfSubject": {
+          "@odata.type": "#microsoft.graph.userSubject",
+          "userId": "REPLACE_WITH_ADMIN_USER_ID"
+        },
+        "conditionalAccessPolicies": [],
+        "conditionalAccessContext": {
+          "signInRiskLevel": "none",
+          "isCompliant": false,
+          "servicePrincipalId": "00000003-0000-0ff1-ce00-000000000000",
+          "isOnPremisesJoined": false,
+          "clientAppType": "browser",
+          "ipAddress": "1.2.3.4",
+          "devicePlatform": "windows",
+          "userRiskLevel": "none",
+          "trustedIpAddressOnly": false,
+          "country": "IT"
+        }
+      },
+      "endpoint": "POST /identity/conditionalAccess/evaluate",
+      "status": "not_run",
+      "method": "graph_api_post",
+      "expected_result": "almeno una policy deve avere grantControls con 'mfa' o 'block' nel risultato",
+      "graph_permissions": [
+        "Policy.Read.All",
+        "Directory.Read.All"
+      ],
+      "check_id": "WI-1",
+      "api_version": "beta",
+      "description": "Scenario: Admin accede senza MFA da browser — deve essere bloccato o sfidato con MFA"
+    },
+    {
+      "result": null,
+      "request_body": {
+        "conditionalAccessWhatIfSubject": {
+          "@odata.type": "#microsoft.graph.userSubject",
+          "userId": "REPLACE_WITH_USER_ID"
+        },
+        "conditionalAccessPolicies": [],
+        "conditionalAccessContext": {
+          "signInRiskLevel": "none",
+          "isCompliant": false,
+          "servicePrincipalId": "00000003-0000-0ff1-ce00-000000000000",
+          "isOnPremisesJoined": false,
+          "clientAppType": "browser",
+          "ipAddress": "85.100.200.50",
+          "devicePlatform": "windows",
+          "userRiskLevel": "none",
+          "trustedIpAddressOnly": false,
+          "country": "IT"
+        }
+      },
+      "endpoint": "POST /identity/conditionalAccess/evaluate",
+      "status": "not_run",
+      "method": "graph_api_post",
+      "expected_result": "policy con sessionControls.signInFrequency <= 3 ore applicata al risultato",
+      "graph_permissions": [
+        "Policy.Read.All",
+        "Directory.Read.All"
+      ],
+      "check_id": "WI-2",
+      "api_version": "beta",
+      "description": "Scenario: Utente standard accede da dispositivo non gestito — deve avere sign-in frequency ridotta"
+    },
+    {
+      "result": null,
+      "request_body": {
+        "conditionalAccessWhatIfSubject": {
+          "@odata.type": "#microsoft.graph.userSubject",
+          "userId": "REPLACE_WITH_REGULAR_USER_ID"
+        },
+        "conditionalAccessPolicies": [],
+        "conditionalAccessContext": {
+          "signInRiskLevel": "none",
+          "isCompliant": true,
+          "servicePrincipalId": "00000006-0000-0ff1-ce00-000000000000",
+          "isOnPremisesJoined": false,
+          "clientAppType": "browser",
+          "ipAddress": "10.0.0.1",
+          "devicePlatform": "windows",
+          "userRiskLevel": "none",
+          "trustedIpAddressOnly": false,
+          "country": "IT"
+        }
+      },
+      "endpoint": "POST /identity/conditionalAccess/evaluate",
+      "status": "not_run",
+      "method": "graph_api_post",
+      "expected_result": "policy con grantControls.builtInControls=['block'] applicata (accesso al portale admin bloccato per non-admin)",
+      "graph_permissions": [
+        "Policy.Read.All",
+        "Directory.Read.All"
+      ],
+      "check_id": "WI-3",
+      "api_version": "beta",
+      "description": "Scenario: Admin accede al Microsoft Admin Portal senza ruolo admin — deve essere bloccato"
+    },
+    {
+      "result": null,
+      "request_body": {
+        "conditionalAccessWhatIfSubject": {
+          "@odata.type": "#microsoft.graph.userSubject",
+          "userId": "REPLACE_WITH_ADMIN_USER_ID"
+        },
+        "conditionalAccessPolicies": [],
+        "conditionalAccessContext": {
+          "signInRiskLevel": "none",
+          "isCompliant": false,
+          "servicePrincipalId": "00000003-0000-0ff1-ce00-000000000000",
+          "isOnPremisesJoined": false,
+          "clientAppType": "browser",
+          "ipAddress": "1.2.3.4",
+          "devicePlatform": "windows",
+          "userRiskLevel": "none",
+          "trustedIpAddressOnly": false,
+          "country": "IT"
+        }
+      },
+      "endpoint": "POST /identity/conditionalAccess/evaluate",
+      "status": "not_run",
+      "method": "graph_api_post",
+      "expected_result": "policy con grantControls.authenticationStrength contenente phishing-resistant methods applicata",
+      "graph_permissions": [
+        "Policy.Read.All",
+        "Directory.Read.All"
+      ],
+      "check_id": "WI-4",
+      "api_version": "beta",
+      "description": "Scenario: Admin con dispositivo non conforme — deve richiedere MFA phishing-resistant"
+    }
+  ],
+  "api_endpoint": "POST https://graph.microsoft.com/beta/identity/conditionalAccess/evaluate",
+  "remediation": {
+    "documentation_url": "https://learn.microsoft.com/en-us/entra/identity/conditional-access/what-if-tool",
+    "description": "Verificare e correggere le policy CA mancanti in Entra Admin Center > Protezione > Accesso condizionale."
+  },
+  "complexity_notes": "Usa la CA What-If API (beta) per simulare scenari di accesso e verificare che le policy CA siano configurate correttamente. Ogni scenario rappresenta un caso d'uso reale (admin non-MFA, utente da IP esterno, dispositivo non gestito, ecc.). Richiede Entra ID P1 + Policy.Read.All.",
+  "version": "3.1.0",
+  "control_id": "CA-WhatIf",
+  "usage_notes": "SOSTITUIRE i placeholder REPLACE_WITH_*_USER_ID con ID utente reali del tenant prima di eseguire. Usare GET /users per ottenere gli ID.",
+  "graph_permissions": [
+    "Policy.Read.All",
+    "Directory.Read.All"
+  ],
+  "title": "Conditional Access What-If — Valida copertura policy su scenari reali",
+  "references": [
+    "https://learn.microsoft.com/en-us/entra/identity/conditional-access/what-if-tool",
+    "https://learn.microsoft.com/en-us/graph/api/conditionalaccessroot-evaluate"
+  ]
+}

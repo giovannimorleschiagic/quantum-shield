@@ -11,7 +11,7 @@
     {
       "license_required": "Microsoft Entra ID P2",
       "expected_result": "Access review attiva con recurrenceSettings.interval <= 14 giorni",
-      "endpoint": "GET /identityGovernance/accessReviews/definitions?$filter=contains(scope/query,'/guests')",
+      "endpoint": "GET /identityGovernance/accessReviews/definitions?$top=100",
       "check_id": "C1",
       "description": "Verificare che esista un Access Review attivo per Guest Users con cadenza <= 14 giorni (richiede Entra P2)",
       "method": "graph_api",
@@ -19,7 +19,8 @@
       "graph_permissions": [
         "AccessReview.Read.All"
       ],
-      "status": "not_run"
+      "status": "not_run",
+      "api_version": "beta"
     },
     {
       "graph_permissions": [],

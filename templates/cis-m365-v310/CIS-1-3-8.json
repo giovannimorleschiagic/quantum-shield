@@ -13,13 +13,15 @@
   ],
   "checks": [
     {
-      "portal": "Microsoft 365 Admin Center > Impostazioni > Org Settings > Sway",
       "check_id": "C1",
-      "expected_result": "'Let people in your organization share their sways with people outside your organization' = Off",
-      "result": null,
-      "status": "not_run",
       "description": "Verificare che la condivisione esterna di Sway sia disabilitata",
-      "method": "manual_admin_center"
+      "method": "manual_admin_center",
+      "portal_path": "M365 Admin Center > Impostazioni > Org Settings > Sway",
+      "graph_permissions": [],
+      "expected_result": "Condivisione esterna Sway = disabilitata. Nessuna Graph API disponibile.",
+      "api_note": "NOTA: Questa impostazione non è esposta tramite Microsoft Graph API.",
+      "status": "not_run",
+      "result": null
     }
   ],
   "section": "1 - Microsoft 365 Administration",

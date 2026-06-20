@@ -34,10 +34,10 @@
       "result": null,
       "method": "graph_api",
       "status": "not_run",
-      "expected_result": "conditions.devices.deviceFilter esclude solo dispositivi gestiti/compliant",
+      "expected_result": "Policy con sessionControls.signInFrequency configurato E conditions.devices.deviceFilter per dispositivi non gestiti",
       "license_required": "Microsoft Entra ID P1",
       "check_id": "C2",
-      "endpoint": "GET /identity/conditionalAccess/policies/{id}"
+      "endpoint": "GET /identity/conditionalAccess/policies?$select=id,displayName,state,sessionControls,conditions"
     }
   ],
   "section": "1 - Microsoft 365 Administration",

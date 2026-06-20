@@ -11,7 +11,7 @@
       ],
       "license_required": "Microsoft Entra ID P1",
       "description": "Verificare che esista almeno un gruppo dinamico con regola di appartenenza per guest users",
-      "endpoint": "GET /groups?$filter=groupTypes/any(c:c eq 'DynamicMembership')&$select=id,displayName,membershipRule,membershipRuleProcessingState"
+      "endpoint": "GET /groups?$filter=groupTypes/any(c:c eq 'DynamicMembership')&$count=true&$select=id,displayName,membershipRule,membershipRuleProcessingState"
     }
   ],
   "title": "Ensure a dynamic group for guest users is created",

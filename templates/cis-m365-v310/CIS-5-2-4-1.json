@@ -29,10 +29,11 @@
       ],
       "description": "Verificare che SSPR sia abilitato per tutti gli utenti",
       "expected_result": "SSPR scope = 'All' (non 'None' né 'Selected')",
-      "endpoint": "GET /policies/authenticationMethodsPolicy?$select=selfServicePasswordResetEnabled - Alternativa: verificare tramite sspr settings",
+      "endpoint": "GET /policies/authenticationMethodsPolicy",
       "result": null,
       "check_id": "C1",
-      "license_required": "Microsoft Entra ID P1"
+      "license_required": "Microsoft Entra ID P1",
+      "api_note": "Lo stato SSPR (All/Selected/None) non e' esposto come proprieta' diretta in Graph: questa chiamata ritorna la policy dei metodi; la copertura 'All' va confermata in Entra Admin Center > Protezione > Reimpostazione password."
     }
   ]
 }

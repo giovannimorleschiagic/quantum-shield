@@ -13,13 +13,15 @@
   ],
   "checks": [
     {
-      "portal": "Microsoft 365 Admin Center > Impostazioni > Org Settings > Microsoft Forms",
       "check_id": "C1",
-      "expected_result": "'Internal phishing protection' = Abilitata (spunta su 'Add internal phishing protection')",
-      "result": null,
-      "status": "not_run",
       "description": "Verificare che la protezione phishing interna di Microsoft Forms sia abilitata",
-      "method": "manual_admin_center"
+      "method": "manual_admin_center",
+      "portal_path": "M365 Admin Center > Impostazioni > Org Settings > Microsoft Forms",
+      "graph_permissions": [],
+      "expected_result": "'Add internal phishing protection' = abilitata. Nessuna Graph API disponibile.",
+      "api_note": "NOTA: Questa impostazione non è esposta tramite Microsoft Graph API.",
+      "status": "not_run",
+      "result": null
     }
   ],
   "section": "1 - Microsoft 365 Administration",

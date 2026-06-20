@@ -18,14 +18,17 @@
     {
       "result": null,
       "expected_result": "Il report è accessibile e viene consultato almeno settimanalmente (verifica procedurale)",
-      "endpoint": "GET /reports/getAzureADApplicationSignInSummary(period='D7')",
+      "endpoint": null,
       "graph_permissions": [
         "Reports.Read.All"
       ],
       "check_id": "C1",
       "description": "Verificare esistenza e accesso al report Application Usage in Entra ID",
       "status": "not_run",
-      "method": "graph_api"
+      "method": "manual_admin_center",
+      "api_version": "beta",
+      "portal_path": "Microsoft Entra admin center > Identity > Monitoring & health > Usage & insights > Application activity (o Enterprise applications > Usage & insights)",
+      "api_note": "Controllo di processo ('reviewed at least weekly'): non esiste un endpoint Graph stabile che attesti la revisione periodica. I dati di utilizzo app sono consultabili solo nel portale. Verifica manuale."
     }
   ],
   "remediation": {

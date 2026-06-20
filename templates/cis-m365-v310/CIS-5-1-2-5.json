@@ -1,7 +1,7 @@
 {
   "checks": [
     {
-      "expected_result": "hideKeepMeSignedIn = true nel Company Branding",
+      "expected_result": "Recupera org ID, poi controlla GET /branding per hideKeepMeSignedIn = true. Alternativa: verificare via Entra Admin Center > Branding aziendale > Avanzate.",
       "graph_permissions": [
         "Organization.Read.All"
       ],
@@ -9,7 +9,7 @@
       "status": "not_run",
       "result": null,
       "method": "graph_api",
-      "endpoint": "GET /organization/{id}?$select=id - poi verificare tramite Get-MgOrganization o portale",
+      "endpoint": "GET /organization?$select=id,displayName",
       "check_id": "C1"
     }
   ],

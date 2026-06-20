@@ -10,7 +10,7 @@
       "status": "not_run",
       "result": null,
       "method": "graph_api",
-      "endpoint": "GET /reports/authenticationMethods/userRegistrationDetails?$filter=isMfaRegistered eq true&$select=userPrincipalName,isMfaRegistered,defaultMfaMethod",
+      "endpoint": "GET /reports/authenticationMethods/userRegistrationDetails?$filter=isMfaRegistered eq true&$select=userPrincipalName,isMfaRegistered",
       "check_id": "C1"
     }
   ],

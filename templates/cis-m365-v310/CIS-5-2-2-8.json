@@ -23,7 +23,7 @@
       "check_id": "C1",
       "status": "not_run",
       "method": "graph_api",
-      "endpoint": "GET /identity/conditionalAccess/policies?$filter=state eq 'enabled'"
+      "endpoint": "GET /identity/conditionalAccess/policies"
     },
     {
       "graph_permissions": [
@@ -31,12 +31,12 @@
       ],
       "result": null,
       "license_required": "Microsoft Entra ID P1",
-      "expected_result": "grantControls.operator = 'OR' e builtInControls = ['block'] per utenti non-admin, o includeUsers limitato a ruoli admin",
+      "expected_result": "Policy con grantControls.builtInControls=['block'] per utenti non-admin su Microsoft Admin Portals",
       "description": "La policy blocca l'accesso agli utenti non-admin (grant=Block o include solo ruoli admin)",
       "check_id": "C2",
       "status": "not_run",
       "method": "graph_api",
-      "endpoint": "GET /identity/conditionalAccess/policies/{id}"
+      "endpoint": "GET /identity/conditionalAccess/policies?$select=id,displayName,state,conditions,grantControls"
     }
   ],
   "remediation": {

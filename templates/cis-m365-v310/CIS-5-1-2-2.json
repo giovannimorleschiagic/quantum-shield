@@ -9,7 +9,7 @@
       "status": "not_run",
       "result": null,
       "method": "graph_api",
-      "endpoint": "GET /policies/authorizationPolicy?$select=permissionGrantPolicyIdsAssignedToDefaultUserRole",
+      "endpoint": "GET /policies/authorizationPolicy?$select=defaultUserRolePermissions",
       "check_id": "C1"
     }
   ],

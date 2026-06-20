@@ -3,7 +3,7 @@ using QuantumShield.Be.Domain.Models;
 
 namespace QuantumShield.Be.Business.Services;
 
-public sealed class EvaluationRunService
+public sealed class EvaluationRunService : IEvaluationRunService
 {
     private readonly IEvaluationRunRepository _evaluationRunRepository;
     private readonly IPolicyEvaluator _policyEvaluator;

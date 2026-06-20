@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using QuantumShield.Be.Api.Contracts;
-using QuantumShield.Be.Business.Services;
+using QuantumShield.Be.Domain.Interfaces;
 
 namespace QuantumShield.Be.Api.Controllers;
 
@@ -8,9 +8,9 @@ namespace QuantumShield.Be.Api.Controllers;
 [Route("api")]
 public sealed class EvaluationRunsController : ControllerBase
 {
-    private readonly EvaluationRunService _evaluationRunService;
+    private readonly IEvaluationRunService _evaluationRunService;
 
-    public EvaluationRunsController(EvaluationRunService evaluationRunService)
+    public EvaluationRunsController(IEvaluationRunService evaluationRunService)
     {
         _evaluationRunService = evaluationRunService;
     }

@@ -36,10 +36,34 @@ public sealed class Tenant
 
     public DateTimeOffset UpdatedAtUtc { get; private set; }
 
-    public static Tenant Create(string tenantName, string tenantId, string clientId, string secretReference, bool isActive = true)
+    public static Tenant Rehydrate(
+        Guid id,
+        string tenantName,
+        string tenantId,
+        string clientId,
+        string secretReference,
+        bool isActive,
+        DateTimeOffset createdAtUtc,
+        DateTimeOffset updatedAtUtc)
     {
         Validate(tenantName, tenantId, clientId, secretReference);
-        return new Tenant(Guid.NewGuid(), tenantName.Trim(), tenantId.Trim(), clientId.Trim(), secretReference.Trim(), isActive);
+
+        return new Tenant(id, tenantName.Trim(), tenantId.Trim(), clientId.Trim(), secretReference.Trim(), isActive)
+        {
+            CreatedAtUtc = createdAtUtc,
+            UpdatedAtUtc = updatedAtUtc
+        };
+    }
+
+    public static Tenant Create(Guid id, string tenantName, string tenantId, string clientId, string secretReference, bool isActive = true)
+    {
+        Validate(tenantName, tenantId, clientId, secretReference);
+        return new Tenant(id, tenantName.Trim(), tenantId.Trim(), clientId.Trim(), secretReference.Trim(), isActive);
+    }
+
+    public static Tenant Create(string tenantName, string tenantId, string clientId, string secretReference, bool isActive = true)
+    {
+        return Create(Guid.NewGuid(), tenantName, tenantId, clientId, secretReference, isActive);
     }
 
     public void Update(string tenantName, string tenantId, string clientId, string secretReference, bool isActive)

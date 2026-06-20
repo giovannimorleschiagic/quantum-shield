@@ -4,14 +4,14 @@ public sealed record CreateTenantRequest(
     string TenantName,
     string TenantId,
     string ClientId,
-    string SecretReference,
+    string ClientSecret,
     bool IsActive);
 
 public sealed record UpdateTenantRequest(
     string TenantName,
     string TenantId,
     string ClientId,
-    string SecretReference,
+    string ClientSecret,
     bool IsActive);
 
 public sealed record TenantResponse(

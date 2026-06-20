@@ -63,6 +63,7 @@ cd src/GW && terraform init && terraform apply -var-file=terraform.tfvars
 
 - Configurazione MSAL FE: env vars `REACT_APP_MSAL_CLIENT_ID`, `REACT_APP_MSAL_TENANT_ID`, `REACT_APP_MSAL_REDIRECT_URI` (file `.env.local` in `src/FE/`); API base URL: `REACT_APP_API_BASE_URL`
 - Configurazione BE richiesta: `Authentication`, `SqlDatabase`, `BlobStorage`, `KeyVault`, `Graph` in `appsettings.json` / secrets
+- **NON eseguire mai `git commit` né `git push`** — i commit e i push li gestisce sempre l'utente manualmente
 - UI sempre in **italiano**
 - Backend: architettura a layer (Domain → Business → Infrastructure ← Api), interfacce servizi nel **Domain**, JWT Bearer su tutti gli endpoint
 - Risultati assessment: artefatto JSON su Azure Blob Storage (non in SQL); SQL conserva solo `ResultBlobName`

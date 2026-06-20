@@ -1,5 +1,13 @@
 prefix               = "quantumshield-dev"
+resource_group_name  = "rg-teamorange"
 location             = "westeurope"
+
+# Service principal authentication
+azure_subscription_id = "00000000-0000-0000-0000-000000000000"
+azure_tenant_id       = "00000000-0000-0000-0000-000000000000"
+azure_client_id       = "00000000-0000-0000-0000-000000000000"
+azure_client_secret   = "replace-with-your-service-principal-secret"
+
 app_service_sku_name = "B1"
 sql_administrator_login    = "sqladminuser"
 sql_administrator_password = "ChangeMe-Now123!"

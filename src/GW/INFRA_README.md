@@ -12,6 +12,7 @@ Terraform in this folder provisions the following Azure resources:
 - Application Gateway (Standard_v2)
 - App Service Plan (Linux)
 - Linux Web App (backend)
+- Static-content Linux Web App (same App Service Plan)
 - Key Vault (RBAC enabled)
 - Azure SQL Server + Azure SQL Database
 - Storage Account + private Blob container
@@ -38,13 +39,14 @@ flowchart LR
 
 Names are built from `prefix` and, for globally-unique services, a generated random suffix:
 
-- `rg-${prefix}`
+- `resource_group_name` input variable (for example, `rg-teamorange`)
 - `vnet-${prefix}`
 - `snet-appgw`
 - `pip-${prefix}-appgw`
 - `agw-${prefix}`
 - `asp-${prefix}`
 - `app-${prefix}` (normalized and trimmed)
+- `static-${prefix}` (normalized and trimmed)
 - `kv-${prefix}-${random_suffix}`
 - `sql-${prefix}-${random_suffix}`
 - `st${prefix}${random_suffix}` (normalized and trimmed)
@@ -101,6 +103,10 @@ Key inputs from `variables.tf`:
 
 - `prefix`
 - `location`
+- `azure_subscription_id`
+- `azure_tenant_id`
+- `azure_client_id`
+- `azure_client_secret`
 - `app_service_sku_name`
 - `app_service_runtime_stack`
 - `key_vault_purge_protection_enabled`
@@ -123,6 +129,8 @@ Exposed outputs from `outputs.tf`:
 - `application_gateway_name`
 - `backend_web_app_name`
 - `backend_web_app_hostname`
+- `static_content_app_name`
+- `static_content_app_hostname`
 - `key_vault_name`
 - `key_vault_uri`
 - `sql_server_fqdn`
@@ -136,7 +144,7 @@ From this folder:
 
 ```bash
 copy terraform.tfvars.example terraform.tfvars
-# set sql_administrator_password in terraform.tfvars
+# set azure_subscription_id, azure_tenant_id, azure_client_id, azure_client_secret, and sql_administrator_password
 terraform init
 terraform plan
 terraform apply
@@ -144,7 +152,7 @@ terraform apply
 
 ## Operational Notes
 
-- Keep `sql_administrator_password` out of source control.
+- Keep `azure_client_secret` and `sql_administrator_password` out of source control.
 - The current frontend listener is HTTP only. For production, prefer HTTPS listener and certificate on Application Gateway.
 - Public network access is still enabled on Key Vault, SQL Server, and Storage Account; consider private endpoints for stricter isolation.
 - With SCM restriction set to Deny, deployment paths that use Kudu/SCM may require dedicated allow rules.

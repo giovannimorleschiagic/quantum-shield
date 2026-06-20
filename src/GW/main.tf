@@ -1,11 +1,12 @@
 locals {
-  resource_group_name = "rg-${var.prefix}"
+  resource_group_name = var.resource_group_name
   vnet_name           = "vnet-${var.prefix}"
   appgw_subnet_name   = "snet-appgw"
   public_ip_name      = "pip-${var.prefix}-appgw"
   appgw_name          = "agw-${var.prefix}"
   app_service_plan    = "asp-${var.prefix}"
   web_app_name        = substr(replace("app-${var.prefix}", "_", "-"), 0, 60)
+  static_content_app_name    = substr(replace("static-${var.prefix}", "_", "-"), 0, 60)
   key_vault_name      = substr(replace("kv-${var.prefix}-${random_string.global_suffix.result}", "_", "-"), 0, 24)
   sql_server_name     = substr(replace("sql-${var.prefix}-${random_string.global_suffix.result}", "_", "-"), 0, 63)
   storage_account_name = substr(
@@ -90,6 +91,27 @@ resource "azurerm_linux_web_app" "backend" {
 
   app_settings = {
     WEBSITES_PORT = "80"
+  }
+}
+
+resource "azurerm_linux_web_app" "static_content" {
+  name                = local.static_content_app_name
+  location            = azurerm_resource_group.this.location
+  resource_group_name = azurerm_resource_group.this.name
+  service_plan_id     = azurerm_service_plan.this.id
+  https_only          = true
+  tags                = var.tags
+
+  site_config {
+    always_on = true
+
+    application_stack {
+      node_version = "22-lts"
+    }
+  }
+
+  app_settings = {
+    WEBSITE_DEFAULT_DOCUMENT = "index.html"
   }
 }
 

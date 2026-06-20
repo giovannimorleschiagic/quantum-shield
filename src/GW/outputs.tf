@@ -23,6 +23,16 @@ output "backend_web_app_hostname" {
   value       = azurerm_linux_web_app.backend.default_hostname
 }
 
+output "static_content_app_name" {
+  description = "Name of the static-content App Service Web App."
+  value       = azurerm_linux_web_app.static_content.name
+}
+
+output "static_content_app_hostname" {
+  description = "Default hostname of the static-content App Service Web App."
+  value       = azurerm_linux_web_app.static_content.default_hostname
+}
+
 output "key_vault_name" {
   description = "Name of the Azure Key Vault."
   value       = azurerm_key_vault.this.name

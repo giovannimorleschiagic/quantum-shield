@@ -14,8 +14,6 @@ public sealed class ZeroTrustDbContext : DbContext
 
     public DbSet<EvaluationRunEntity> EvaluationRuns => Set<EvaluationRunEntity>();
 
-    public DbSet<EvaluationResultEntity> EvaluationResults => Set<EvaluationResultEntity>();
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<TenantEntity>(entity =>
@@ -34,28 +32,11 @@ public sealed class ZeroTrustDbContext : DbContext
         {
             entity.ToTable("EvaluationRuns");
             entity.HasKey(item => item.Id);
-            entity.Property(item => item.TemplateIdentifier).HasMaxLength(255).IsRequired();
-            entity.Property(item => item.TemplateVersion).HasMaxLength(100);
-            entity.Property(item => item.ErrorMessage).HasMaxLength(4000);
+            entity.Property(item => item.ResultBlobName).HasMaxLength(1000);
             entity.HasOne(item => item.Tenant)
                 .WithMany()
                 .HasForeignKey(item => item.TenantId)
                 .OnDelete(DeleteBehavior.Cascade);
-            entity.HasMany(item => item.Results)
-                .WithOne(item => item.Run)
-                .HasForeignKey(item => item.EvaluationRunId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<EvaluationResultEntity>(entity =>
-        {
-            entity.ToTable("EvaluationResults");
-            entity.HasKey(item => item.Id);
-            entity.Property(item => item.RuleKey).HasMaxLength(255).IsRequired();
-            entity.Property(item => item.DisplayName).HasMaxLength(255).IsRequired();
-            entity.Property(item => item.ExpectedValue).HasMaxLength(4000);
-            entity.Property(item => item.ActualValue).HasMaxLength(4000);
-            entity.Property(item => item.Notes).HasMaxLength(4000);
         });
     }
 }

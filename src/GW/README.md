@@ -7,6 +7,8 @@ This folder contains a self-contained Terraform stack that provisions:
 - a Standard Public IP for the gateway frontend
 - a Linux App Service Plan
 - a Linux Web App used as the backend target
+- a static-content Linux Web App hosted in the same App Service Plan
+- Azure Application Insights connected to both App Services
 - an Azure Key Vault
 - an Azure SQL Server and SQL Database
 - an Azure Storage Account with a private Blob container
@@ -28,8 +30,7 @@ The backend pool uses the App Service default hostname, which is the supported p
 ## Prerequisites
 
 - Terraform 1.5+
-- Azure credentials already available through Azure CLI, managed identity, or service principal
-- A target Azure subscription selected before running Terraform
+- Azure service principal credentials with permissions on target subscription
 - A strong value for `sql_administrator_password` in `terraform.tfvars`
 
 ## Usage
@@ -37,6 +38,7 @@ The backend pool uses the App Service default hostname, which is the supported p
 ```bash
 cd src/GW
 copy terraform.tfvars.example terraform.tfvars
+# set azure_subscription_id, azure_tenant_id, azure_client_id, azure_client_secret
 terraform init
 terraform plan
 terraform apply

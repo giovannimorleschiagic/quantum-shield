@@ -3,7 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.EntityFrameworkCore.Migrations;
 using QuantumShield.Be.Infrastructure.Persistence;
 
 #nullable disable
@@ -11,9 +11,10 @@ using QuantumShield.Be.Infrastructure.Persistence;
 namespace QuantumShield.Be.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ZeroTrustDbContext))]
-    partial class ZeroTrustDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260620163000_CatalogEvaluationRunRefactor")]
+    partial class CatalogEvaluationRunRefactor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

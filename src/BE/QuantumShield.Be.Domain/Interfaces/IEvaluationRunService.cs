@@ -10,5 +10,5 @@ public interface IEvaluationRunService
 
     Task<IReadOnlyCollection<EvaluationRun>> ListByTenantAsync(Guid tenantId, CancellationToken cancellationToken);
 
-    Task<EvaluationRun> TriggerAsync(Guid tenantId, string? templateIdentifier, CancellationToken cancellationToken);
+    Task<EvaluationRun> TriggerAsync(Guid tenantId, CancellationToken cancellationToken);
 }

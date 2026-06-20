@@ -4,10 +4,37 @@ variable "prefix" {
   default     = "quantumshield"
 }
 
+variable "resource_group_name" {
+  description = "Name of the Azure Resource Group to create."
+  type        = string
+  default     = "rg-teamorange"
+}
+
 variable "location" {
   description = "Azure region for all resources."
   type        = string
   default     = "westeurope"
+}
+
+variable "azure_subscription_id" {
+  description = "Azure subscription ID used by the service principal."
+  type        = string
+}
+
+variable "azure_tenant_id" {
+  description = "Azure tenant ID used by the service principal."
+  type        = string
+}
+
+variable "azure_client_id" {
+  description = "Azure client ID (application ID) of the service principal."
+  type        = string
+}
+
+variable "azure_client_secret" {
+  description = "Azure client secret of the service principal."
+  type        = string
+  sensitive   = true
 }
 
 variable "app_service_sku_name" {

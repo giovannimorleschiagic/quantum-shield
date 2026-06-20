@@ -16,27 +16,52 @@ internal static class ApiMappings
             tenant.CreatedAtUtc,
             tenant.UpdatedAtUtc);
 
-    public static EvaluationRunResponse ToResponse(this EvaluationRun run)
+    public static EvaluationRunSummaryResponse ToSummaryResponse(this EvaluationRun run)
         => new(
             run.Id,
             run.TenantId,
             run.Status,
-            run.TemplateIdentifier,
-            run.TemplateVersion,
-            run.TotalChecks,
-            run.PassedChecks,
-            run.FailedChecks,
-            run.NotApplicableChecks,
-            run.ErrorMessage,
+            run.ResultBlobName,
+            run.StartedAtUtc,
+            run.CompletedAtUtc);
+
+    public static EvaluationRunDetailResponse ToDetailResponse(this EvaluationRun run)
+        => new(
+            run.Id,
+            run.TenantId,
+            run.Status,
+            run.ResultBlobName,
             run.StartedAtUtc,
             run.CompletedAtUtc,
-            run.Results.Select(static result => new EvaluationResultResponse(
-                result.Id,
-                result.RuleKey,
-                result.DisplayName,
-                result.Status,
-                result.Severity,
-                result.ExpectedValue,
-                result.ActualValue,
-                result.Notes)).ToList());
+            run.Artifact is null
+                ? null
+                : new EvaluationArtifactSummaryResponse(
+                    run.Artifact.Summary.TotalChecks,
+                    run.Artifact.Summary.PassedChecks,
+                    run.Artifact.Summary.FailedChecks,
+                    run.Artifact.Summary.NotApplicableChecks,
+                    run.Artifact.Summary.TemplatesProcessed,
+                    run.Artifact.Summary.TemplatesSkipped),
+            run.Artifact?.Templates.Select(static template => new EvaluationTemplateResultResponse(
+                    template.ControlId,
+                    template.Benchmark,
+                    template.Version,
+                    template.Section,
+                    template.Title,
+                    template.Checks.Select(static check => new EvaluationCheckResultResponse(
+                            check.ControlId,
+                            check.CheckId,
+                            check.Title,
+                            check.Description,
+                            check.Method,
+                            check.Endpoint,
+                            check.GraphPermissions,
+                            check.ExpectedResult,
+                            check.Status,
+                            check.ActualResult,
+                            check.RawResult,
+                            check.Notes))
+                        .ToList()))
+                .ToList()
+            ?? []);
 }

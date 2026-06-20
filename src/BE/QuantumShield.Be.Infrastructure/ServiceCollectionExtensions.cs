@@ -7,12 +7,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using QuantumShield.Be.Domain.Interfaces;
 using QuantumShield.Be.Domain.Options;
+using QuantumShield.Be.Infrastructure.Artifacts;
 using QuantumShield.Be.Infrastructure.Evaluation;
 using QuantumShield.Be.Infrastructure.Persistence;
 using QuantumShield.Be.Infrastructure.Persistence.Repositories;
 using QuantumShield.Be.Infrastructure.Security;
 using QuantumShield.Be.Infrastructure.Templates;
-using QuantumShield.Be.Infrastructure.Tenants;
 
 namespace QuantumShield.Be.Infrastructure;
 
@@ -25,8 +25,7 @@ public static class ServiceCollectionExtensions
             .Bind(configuration.GetSection(BlobStorageOptions.SectionName))
             .Validate(static options =>
                     !string.IsNullOrWhiteSpace(options.ConnectionString)
-                    && !string.IsNullOrWhiteSpace(options.ContainerName)
-                    && !string.IsNullOrWhiteSpace(options.DefaultTemplateBlobName),
+                    && !string.IsNullOrWhiteSpace(options.EvaluationResultContainerName),
                 "BlobStorage configuration is incomplete.")
             .ValidateOnStart();
 
@@ -51,7 +50,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton(static serviceProvider =>
         {
             var options = serviceProvider.GetRequiredService<IOptions<BlobStorageOptions>>().Value;
-            return new BlobContainerClient(options.ConnectionString, options.ContainerName);
+            return new BlobContainerClient(options.ConnectionString, options.EvaluationResultContainerName);
         });
 
         services.AddSingleton(static serviceProvider =>
@@ -68,10 +67,10 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<ITenantRepository, TenantRepository>();
         services.AddScoped<IEvaluationRunRepository, EvaluationRunRepository>();
-        services.AddScoped<ITemplateProvider, BlobTemplateProvider>();
+        services.AddScoped<ITemplateCatalogProvider, FileSystemTemplateCatalogProvider>();
+        services.AddScoped<IEvaluationArtifactStore, EvaluationArtifactBlobStore>();
+        services.AddScoped<ICatalogEvaluationRunner, CatalogEvaluationRunner>();
         services.AddScoped<ITenantCredentialProvider, KeyVaultTenantCredentialProvider>();
-        services.AddScoped<ITenantDataCollector, MicrosoftGraphTenantDataCollector>();
-        services.AddScoped<IPolicyEvaluator, PolicyEvaluator>();
 
         return services;
     }

@@ -5,18 +5,14 @@ namespace QuantumShield.Be.Domain.Models;
 
 public sealed class EvaluationRun
 {
-    private readonly List<EvaluationResult> _results = [];
-
     private EvaluationRun()
     {
     }
 
-    private EvaluationRun(Guid tenantId, string templateIdentifier, string? templateVersion)
+    private EvaluationRun(Guid tenantId)
     {
         Id = Guid.NewGuid();
         TenantId = tenantId;
-        TemplateIdentifier = templateIdentifier;
-        TemplateVersion = templateVersion;
         Status = EvaluationRunStatus.Pending;
         StartedAtUtc = DateTimeOffset.UtcNow;
     }
@@ -27,39 +23,22 @@ public sealed class EvaluationRun
 
     public EvaluationRunStatus Status { get; private set; }
 
-    public string TemplateIdentifier { get; private set; } = string.Empty;
-
-    public string? TemplateVersion { get; private set; }
-
-    public int TotalChecks { get; private set; }
-
-    public int PassedChecks { get; private set; }
-
-    public int FailedChecks { get; private set; }
-
-    public int NotApplicableChecks { get; private set; }
-
-    public string? ErrorMessage { get; private set; }
+    public string? ResultBlobName { get; private set; }
 
     public DateTimeOffset StartedAtUtc { get; private set; }
 
     public DateTimeOffset? CompletedAtUtc { get; private set; }
 
-    public IReadOnlyCollection<EvaluationResult> Results => _results.AsReadOnly();
+    public EvaluationArtifactDocument? Artifact { get; private set; }
 
-    public static EvaluationRun CreatePending(Guid tenantId, string templateIdentifier, string? templateVersion)
+    public static EvaluationRun CreatePending(Guid tenantId)
     {
         if (tenantId == Guid.Empty)
         {
             throw new DomainValidationException("Tenant id is required.");
         }
 
-        if (string.IsNullOrWhiteSpace(templateIdentifier))
-        {
-            throw new DomainValidationException("Template identifier is required.");
-        }
-
-        return new EvaluationRun(tenantId, templateIdentifier.Trim(), templateVersion?.Trim());
+        return new EvaluationRun(tenantId);
     }
 
     public void MarkInProgress()
@@ -72,36 +51,29 @@ public sealed class EvaluationRun
         Status = EvaluationRunStatus.InProgress;
     }
 
-    public void AssignTemplateMetadata(string templateIdentifier, string? templateVersion)
-    {
-        if (string.IsNullOrWhiteSpace(templateIdentifier))
-        {
-            throw new DomainValidationException("Template identifier is required.");
-        }
-
-        TemplateIdentifier = templateIdentifier.Trim();
-        TemplateVersion = templateVersion?.Trim();
-    }
-
-    public void Complete(IEnumerable<EvaluationResult> results)
+    public void Complete(string resultBlobName)
     {
         if (Status != EvaluationRunStatus.InProgress)
         {
             throw new DomainValidationException("Only in-progress runs can be completed.");
         }
 
-        _results.Clear();
-        _results.AddRange(results);
-        TotalChecks = _results.Count;
-        PassedChecks = _results.Count(static item => item.Status == EvaluationCheckStatus.Passed);
-        FailedChecks = _results.Count(static item => item.Status == EvaluationCheckStatus.Failed);
-        NotApplicableChecks = _results.Count(static item => item.Status == EvaluationCheckStatus.NotApplicable);
+        if (string.IsNullOrWhiteSpace(resultBlobName))
+        {
+            throw new DomainValidationException("Result blob name is required.");
+        }
+
+        ResultBlobName = resultBlobName.Trim();
         Status = EvaluationRunStatus.Completed;
         CompletedAtUtc = DateTimeOffset.UtcNow;
-        ErrorMessage = null;
     }
 
-    public void Fail(string errorMessage)
+    public void AttachArtifact(EvaluationArtifactDocument? artifact)
+    {
+        Artifact = artifact;
+    }
+
+    public void Fail()
     {
         if (Status is EvaluationRunStatus.Completed or EvaluationRunStatus.Failed)
         {
@@ -109,7 +81,6 @@ public sealed class EvaluationRun
         }
 
         Status = EvaluationRunStatus.Failed;
-        ErrorMessage = string.IsNullOrWhiteSpace(errorMessage) ? "The evaluation run failed." : errorMessage.Trim();
         CompletedAtUtc = DateTimeOffset.UtcNow;
     }
 }

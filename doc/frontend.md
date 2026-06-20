@@ -5,6 +5,142 @@
 - **React 19** con `react-dom/client` (`createRoot`)
 - **TypeScript 4.9** in modalità strict (`tsconfig.json`)
 - **Create React App** (react-scripts 5) — nessun `eject`
+- **Axios** — client HTTP per le chiamate API verso il backend
+
+## Struttura `src/`
+
+```
+src/FE/src/
+├── api/
+│   ├── axiosInstance.ts                        # Axios configurato con baseURL env var
+│   ├── tenants/
+│   │   ├── models.ts                           # CreateTenantRequest, UpdateTenantRequest, TenantResponse
+│   │   └── tenantsProvider.ts                  # getAll, getById, create, update
+│   └── evaluationRuns/
+│       ├── models.ts                           # EvaluationRunResponse, EvaluationResultResponse, tipi
+│       └── evaluationRunsProvider.ts           # trigger, getAll, getById, getByTenant
+├── index.tsx                                   # Entry point — monta MsalProvider + App
+├── App.tsx                                     # Componente principale — login/logout MSAL
+└── authConfig.ts                               # Configurazione MSAL da env vars
+```
+
+## Layer API (`src/api/`)
+
+### `axiosInstance.ts`
+
+Istanza Axios condivisa, configurata con:
+- `baseURL`: da `REACT_APP_API_BASE_URL` (default: `https://localhost:7261`)
+- `Content-Type: application/json`
+
+```ts
+const axiosInstance = axios.create({
+  baseURL: process.env.REACT_APP_API_BASE_URL ?? "https://localhost:7261",
+  headers: { "Content-Type": "application/json" },
+});
+```
+
+### `tenantsProvider`
+
+| Metodo | HTTP | Endpoint | Descrizione |
+|---|---|---|---|
+| `getAll()` | GET | `/api/tenants` | Lista tutti i tenant |
+| `getById(id)` | GET | `/api/tenants/{id}` | Singolo tenant |
+| `create(req)` | POST | `/api/tenants` | Crea tenant → 201 |
+| `update(id, req)` | PUT | `/api/tenants/{id}` | Aggiorna tenant |
+
+### `evaluationRunsProvider`
+
+| Metodo | HTTP | Endpoint | Descrizione |
+|---|---|---|---|
+| `trigger(req)` | POST | `/api/evaluations/runs` | Avvia assessment → 202 |
+| `getAll()` | GET | `/api/evaluations/runs` | Lista tutti i run |
+| `getById(id)` | GET | `/api/evaluations/runs/{id}` | Singolo run |
+| `getByTenant(tenantId)` | GET | `/api/tenants/{id}/runs` | Run per tenant |
+
+### Modelli TypeScript
+
+```ts
+// Tipi di stato
+type EvaluationRunStatus = "Pending" | "InProgress" | "Completed" | "Failed";
+type EvaluationCheckStatus = "Passed" | "Failed" | "NotApplicable";
+type EvaluationSeverity = "Low" | "Medium" | "High" | "Critical";
+
+interface EvaluationRunResponse {
+  id, tenantId, status, templateIdentifier, templateVersion,
+  totalChecks, passedChecks, failedChecks, notApplicableChecks,
+  errorMessage, startedAtUtc, completedAtUtc, results: EvaluationResultResponse[]
+}
+```
+
+## Componenti React
+
+### `index.tsx` — Entry point
+
+```tsx
+const msalInstance = new PublicClientApplication(msalConfig);
+msalInstance.initialize().then(() => {
+  root.render(
+    <React.StrictMode>
+      <MsalProvider instance={msalInstance}><App /></MsalProvider>
+    </React.StrictMode>
+  );
+});
+```
+
+### `App.tsx` — Componente principale
+
+Gestisce login/logout MSAL con flusso redirect. **Struttura JSX:**
+
+```
+.App
+  └─ .App-header
+       └─ .App-panel
+            ├─ .App-eyebrow          ("Quantum Shield")
+            ├─ h1                    (titolo)
+            ├─ .App-description      (testo descrittivo)
+            ├─ .App-status           (utente corrente)
+            ├─ .App-actions
+            │    ├─ .App-buttonPrimary   (Test login MSAL)
+            │    └─ .App-buttonSecondary (Test logout)
+            └─ pre.App-result        (messaggio feedback, condizionale)
+```
+
+## Stili CSS
+
+Nessun CSS-in-JS, Tailwind o preprocessore. CSS plain in `App.css`.
+
+| Classe | Ruolo |
+|---|---|
+| `.App-panel` | Card glassmorphism (backdrop-filter, border rgba) |
+| `.App-eyebrow` | Label uppercase azzurra sopra il titolo |
+| `.App-button` | Base bottoni (border-radius: 999px) |
+| `.App-buttonPrimary` | Gradiente azzurro con box-shadow |
+| `.App-buttonSecondary` | Sfondo semitrasparente con bordo |
+| `.App-result` | `<pre>` stilizzato per messaggi di feedback |
+| `.App-status` | Riga di stato (`aria-live="polite"`) |
+
+## Testing (`App.test.tsx`)
+
+Framework: **Jest + React Testing Library**.
+
+Mock di `@azure/msal-react`:
+
+```ts
+jest.mock("@azure/msal-react", () => ({
+  useMsal: () => ({
+    instance: { loginRedirect: jest.fn(), logoutRedirect: jest.fn() },
+    accounts: [],
+    inProgress: "none",
+  }),
+}));
+```
+
+
+## Tecnologie
+
+- **React 19** con `react-dom/client` (`createRoot`)
+- **TypeScript 4.9** in modalità strict (`tsconfig.json`)
+- **Create React App** (react-scripts 5) — nessun `eject`
 
 ## Componenti
 

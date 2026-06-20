@@ -65,6 +65,7 @@ REACT_APP_MSAL_CLIENT_ID=<guid-app-azure>
 REACT_APP_MSAL_TENANT_ID=<guid-tenant>
 REACT_APP_MSAL_REDIRECT_URI=http://localhost:3000/
 REACT_APP_API_BASE_URL=https://localhost:7261
+REACT_APP_MSAL_API_SCOPE=api://<guid-app-backend>/.default
 ```
 
 ### Backend

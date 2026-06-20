@@ -94,6 +94,7 @@ export default function TenantDetailPage() {
           <Stack spacing={1.5}>
             <InfoRow label="Tenant ID" value={tenant.tenantId} />
             <InfoRow label="Client ID" value={tenant.clientId} />
+            <InfoRow label="Secret reference" value={tenant.secretReference} />
             <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
               <Typography color="text.secondary" sx={{ width: 180 }}>
                 Stato
@@ -103,6 +104,12 @@ export default function TenantDetailPage() {
                 color={tenant.isActive ? "success" : "default"}
                 size="small"
               />
+            </Box>
+            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+              <Typography color="text.secondary" sx={{ width: 180 }}>
+                Tipologia
+              </Typography>
+              <Chip label={tenant.isB2C ? "B2C" : "Standard"} color={tenant.isB2C ? "info" : "default"} size="small" />
             </Box>
             <InfoRow label="Creato il" value={new Date(tenant.createdAtUtc).toLocaleString("it-IT")} />
             <InfoRow label="Aggiornato il" value={new Date(tenant.updatedAtUtc).toLocaleString("it-IT")} />

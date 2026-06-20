@@ -47,8 +47,9 @@ export async function mockAdapter(config: InternalAxiosRequestConfig): Promise<A
       tenantName: body.tenantName ?? "Nuovo tenant",
       tenantId: body.tenantId ?? crypto.randomUUID(),
       clientId: body.clientId ?? crypto.randomUUID(),
-      secretReference: body.secretReference ?? "",
+      secretReference: `https://mock-vault.vault.azure.net/secrets/tenant-${crypto.randomUUID()}-client-secret/mock`,
       isActive: body.isActive ?? true,
+      isB2C: body.isB2C ?? false,
       createdAtUtc: new Date().toISOString(),
       updatedAtUtc: new Date().toISOString(),
     };

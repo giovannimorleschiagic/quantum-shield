@@ -31,8 +31,9 @@ export default function TenantEditPage() {
           tenantName: t.tenantName,
           tenantId: t.tenantId,
           clientId: t.clientId,
-          secretReference: t.secretReference,
+          clientSecret: "",
           isActive: t.isActive,
+          isB2C: t.isB2C,
         }),
       )
       .catch(() => setError("Errore nel caricamento del tenant."));
@@ -75,13 +76,9 @@ export default function TenantEditPage() {
             <TextField label="Nome tenant" required value={form.tenantName} onChange={set("tenantName")} />
             <TextField label="Tenant ID" required value={form.tenantId} onChange={set("tenantId")} />
             <TextField label="Client ID" required value={form.clientId} onChange={set("clientId")} />
-            <TextField
-              label="Secret Reference"
-              required
-              value={form.secretReference}
-              onChange={set("secretReference")}
-            />
+            <TextField label="Client secret" required type="password" value={form.clientSecret} onChange={set("clientSecret")} />
             <FormControlLabel control={<Switch checked={form.isActive} onChange={set("isActive")} />} label="Attivo" />
+            <FormControlLabel control={<Switch checked={form.isB2C} onChange={set("isB2C")} />} label="Tenant B2C" />
             <Box sx={{ display: "flex", gap: 1, pt: 1 }}>
               <Button type="submit" variant="contained" disabled={saving}>
                 {saving ? "Salvataggio…" : "Salva modifiche"}

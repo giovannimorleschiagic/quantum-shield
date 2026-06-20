@@ -8,19 +8,24 @@ namespace QuantumShield.Be.Infrastructure.Persistence.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
-                name: "IsB2C",
-                table: "Tenants",
-                type: "bit",
-                nullable: false,
-                defaultValue: false);
+            migrationBuilder.Sql(
+                """
+                IF COL_LENGTH('Tenants', 'IsB2C') IS NULL
+                BEGIN
+                    ALTER TABLE [Tenants] ADD [IsB2C] bit NOT NULL DEFAULT CAST(0 AS bit);
+                END
+                """);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "IsB2C",
-                table: "Tenants");
+            migrationBuilder.Sql(
+                """
+                IF COL_LENGTH('Tenants', 'IsB2C') IS NOT NULL
+                BEGIN
+                    ALTER TABLE [Tenants] DROP COLUMN [IsB2C];
+                END
+                """);
         }
     }
 }

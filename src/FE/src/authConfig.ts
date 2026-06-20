@@ -3,6 +3,7 @@ import { Configuration, LogLevel, RedirectRequest } from "@azure/msal-browser";
 const clientId = process.env.REACT_APP_MSAL_CLIENT_ID!;
 const tenantId = process.env.REACT_APP_MSAL_TENANT_ID!;
 const redirectUri = process.env.REACT_APP_MSAL_REDIRECT_URI ?? "http://localhost:3000/";
+const apiScope = process.env.REACT_APP_MSAL_API_SCOPE;
 
 export const msalConfig: Configuration = {
   auth: {
@@ -29,5 +30,5 @@ export const msalConfig: Configuration = {
 };
 
 export const loginRequest: RedirectRequest = {
-  scopes: ["User.Read"],
+  scopes: apiScope ? ["User.Read", apiScope] : ["User.Read"],
 };

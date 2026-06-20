@@ -1,7 +1,13 @@
 import { InteractionRequiredAuthError, type AccountInfo, type IPublicClientApplication } from "@azure/msal-browser";
 import axiosInstance from "./axiosInstance";
 
-const API_SCOPES = [process.env.REACT_APP_MSAL_API_SCOPE ?? `api://${process.env.REACT_APP_MSAL_CLIENT_ID}/.default`];
+const apiScope = process.env.REACT_APP_MSAL_API_SCOPE;
+
+if (!apiScope) {
+  throw new Error("REACT_APP_MSAL_API_SCOPE must point to the backend app scope, for example api://<be-app-id>/.default.");
+}
+
+const API_SCOPES = [apiScope];
 
 /**
  * Registra un request interceptor su axiosInstance che allega automaticamente

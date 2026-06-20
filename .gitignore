@@ -53,9 +53,14 @@ vite.config.*.timestamp-*
 .yarn/build-state.yml
 .yarn/install-state.gz
 
+# Terraform local working directory
+**/.terraform/
+
 # Temporary files
 tmp/
 temp/
 *.tmp
 *.bak
 *.swp
+
+

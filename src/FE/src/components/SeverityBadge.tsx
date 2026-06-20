@@ -1,5 +1,6 @@
 import { Chip } from "@mui/material";
-import type { EvaluationSeverity } from "../api/evaluationRuns/models";
+
+type EvaluationSeverity = "Low" | "Medium" | "High" | "Critical";
 
 const CONFIG: Record<
   EvaluationSeverity,
